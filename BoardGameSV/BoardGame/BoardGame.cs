@@ -20,7 +20,7 @@ public class BoardGame : Game {
 
 	AnimationSprite[] playerIndicator;
 
-	Agent[] Player = new Agent[9];
+	Agent[] Player = new Agent[10];
 
 	Agent activeplayer;
 
@@ -53,8 +53,9 @@ public class BoardGame : Game {
 		Player [4] = new MonteCarlo ("Carlo20", 20, true);	
 		Player [5] = new MonteCarlo ("Carlo200", 200, true);	
 		Player [6] = new MiniMax ("MiMax3", 3, true);	
-		Player [7] = new MiniMax ("MiMaxFull", -1, true);	
-		Player [8] = new AgentMain.Alpha ("Alpha");
+		Player [7] = new MiniMax ("MiMaxFull", -1, true);
+		Player [8] = new MiniCarlo("MiniCarlo", 3);
+		Player [9] = new AgentMain.Alpha ("Alpha");
 
 		startingplayer = -1;
 
