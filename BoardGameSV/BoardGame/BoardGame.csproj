@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{77543762-FD34-4056-BD4C-F46F0A8C5758}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ConnectFour</RootNamespace>
+    <AssemblyName>ConnectFour</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Agents\MiniCarlo.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\GXPEngine\AnimationSprite.cs">
+      <Link>GXPEngine\AnimationSprite.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Canvas.cs">
+      <Link>GXPEngine\Canvas.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Game.cs">
+      <Link>GXPEngine\Game.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\GameObject.cs">
+      <Link>GXPEngine\GameObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Mathf.cs">
+      <Link>GXPEngine\Mathf.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Pivot.cs">
+      <Link>GXPEngine\Pivot.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Sound.cs">
+      <Link>GXPEngine\Sound.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\SoundChannel.cs">
+      <Link>GXPEngine\SoundChannel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Sprite.cs">
+      <Link>GXPEngine\Sprite.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Core\BlendMode.cs">
+      <Link>GXPEngine\Core\BlendMode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Core\BoxCollider.cs">
+      <Link>GXPEngine\Core\BoxCollider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Core\Collider.cs">
+      <Link>GXPEngine\Core\Collider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Core\GLContext.cs">
+      <Link>GXPEngine\Core\GLContext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Core\Rectangle.cs">
+      <Link>GXPEngine\Core\Rectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Core\Texture2D.cs">
+      <Link>GXPEngine\Core\Texture2D.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Core\Transformable.cs">
+      <Link>GXPEngine\Core\Transformable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Core\Vector2.cs">
+      <Link>GXPEngine\Core\Vector2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\FMOD\FMOD.cs">
+      <Link>GXPEngine\FMOD\FMOD.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Managers\CollisionManager.cs">
+      <Link>GXPEngine\Managers\CollisionManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Managers\UpdateManager.cs">
+      <Link>GXPEngine\Managers\UpdateManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\OpenGL\GL.cs">
+      <Link>GXPEngine\OpenGL\GL.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Utils\Input.cs">
+      <Link>GXPEngine\Utils\Input.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Utils\Key.cs">
+      <Link>GXPEngine\Utils\Key.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Utils\MouseHandler.cs">
+      <Link>GXPEngine\Utils\MouseHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Utils\Time.cs">
+      <Link>GXPEngine\Utils\Time.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GXPEngine\Utils\Utils.cs">
+      <Link>GXPEngine\Utils\Utils.cs</Link>
+    </Compile>
+    <Compile Include="BoardGame.cs" />
+    <Compile Include="GameBoards\BoardView.cs" />
+    <Compile Include="GameBoards\ConnectFourBoard.cs" />
+    <Compile Include="GameBoards\ConnectFourView.cs" />
+    <Compile Include="GameBoards\DomineeringBoard.cs" />
+    <Compile Include="GameBoards\DomineeringView.cs" />
+    <Compile Include="GameBoards\GameBoard.cs" />
+    <Compile Include="GameBoards\GomokuBoard.cs" />
+    <Compile Include="GameBoards\GomokuView.cs" />
+    <Compile Include="GameBoards\OthelloBoard.cs" />
+    <Compile Include="GameBoards\OthelloView.cs" />
+    <Compile Include="GameBoards\PentagoBoard.cs" />
+    <Compile Include="GameBoards\PentagoView.cs" />
+    <Compile Include="GUIelements\Button.cs" />
+    <Compile Include="GUIelements\OptionButton.cs" />
+    <Compile Include="GUIelements\StopWatch.cs" />
+    <Compile Include="Agents\Agent.cs" />
+    <Compile Include="Agents\Human.cs" />
+    <Compile Include="Agents\RandomPlayer.cs" />
+    <Compile Include="GameBoards\SquareBoard.cs" />
+    <Compile Include="Agents\MiniMax.cs" />
+    <Compile Include="Agents\Greedy.cs" />
+    <Compile Include="GameBoards\HexBoard.cs" />
+    <Compile Include="GameBoards\HexView.cs" />
+    <Compile Include="Agents\MonteCarlo.cs" />
+    <Compile Include="Agents\Alpha.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup />
+</Project>
