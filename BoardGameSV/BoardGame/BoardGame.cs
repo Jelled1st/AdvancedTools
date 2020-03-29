@@ -9,7 +9,6 @@ public class BoardGame : Game {
 
 	OptionButton gameChoiceButton;
 	OptionButton[] playerSelect;
-	OptionButton playALottaGames;
 	Button message;
 	OptionButton startButton;
 	OptionButton gameLength;
@@ -27,11 +26,18 @@ public class BoardGame : Game {
 	Thread moveChooseThread=null;
 
 	int[] wins = new int[2];
+	int gamesPlayed = 0;
 	int startingplayer;
 	int _move;
 	int activeplayerindex;
 
 	bool boardchanged=true;
+
+
+	OptionButton compareAIButton;
+	int compareAIGameAmount = 100;
+	GameLogger gameLogger = new GameLogger();
+	string loggedGamesPath = "D:/School/Saxion/2019 - 2020/Q3/Personal Portfolio/LoggedGames/";
 
 	enum GameState {
 		Pause,			// end of game - pause to show outcome
@@ -61,18 +67,18 @@ public class BoardGame : Game {
 
 		state = GameState.Menu;
 
-		gameChoiceButton = new OptionButton (190, 30, 600, 15, new string[]{ "Tic Tac Toe", "Connect Four", "Pentago" , "Gomoku 9x9","Domineering 7x7","Domineering 9x9","Othello","Hex 7x7","Hex 10x10"}); // , "Gomoku 15x15"
+		gameChoiceButton = new OptionButton (190, 30, 600, 15, new string[]{ "Tic Tac Toe", "Tic Tac 5", "Connect Four", "Pentago" , "Gomoku 9x9","Domineering 7x7","Domineering 9x9","Othello","Hex 7x7","Hex 10x10"}); // , "Gomoku 15x15"
 		AddChild (gameChoiceButton);
 		gameChoiceButton.OnButtonClick += RegisterBoardChoice;
 
 		matchSize=new OptionButton(190,30,600,55,new string[]{"Best of 1","Best of 2","Best of 3","Best of 4","Best of 5","Best of 6"});
 		AddChild (matchSize);
-		gameLength = new OptionButton (190, 30, 600, 95, new string[]{ "1 minute", "2 minutes", "5 minutes", "9 minutes" });
+		gameLength = new OptionButton (190, 30, 600, 95, new string[]{ "1 minute", "2 minutes", "5 minutes", "9 minutes", "No timer" });
 		AddChild (gameLength);
 		autoPlay = new OptionButton (190, 30, 600, 560, new string[]{ "Autoplay off", "Autoplay on" });
 		AddChild (autoPlay);
-		playALottaGames = new OptionButton(190, 30, 600, 520, new string[] { "Normal Games", "Lotta games" });
-		AddChild(playALottaGames);
+		compareAIButton = new OptionButton(190, 30, 600, 520, new string[] { "Normal Games", "Compare AI" });
+		AddChild(compareAIButton);
 
 		playerSelect=new OptionButton[2];
 		playerIndicator = new AnimationSprite[2];
@@ -127,6 +133,10 @@ public class BoardGame : Game {
 			case "Tic Tac Toe":
 				mainboard = new GomokuBoard (3, 3, 3, 3);
 				mainview = new GomokuView ((GomokuBoard)mainboard);
+				break;
+			case "Tic Tac 5":
+				mainboard = new GomokuBoard(5, 5, 3, 5);
+				mainview = new GomokuView((GomokuBoard)mainboard);
 				break;
 			case "Gomoku 9x9":
 				mainboard = new GomokuBoard (9, 9, 5, 5);
@@ -206,6 +216,7 @@ public class BoardGame : Game {
 			score [0].ShowMessage ("0");
 			wins [1] = 0;
 			score [1].ShowMessage ("0");
+			gamesPlayed = 0;
 			startButton.SetSelection (1); // ("End Match")
 			StartGame();
 		} else {
@@ -218,13 +229,20 @@ public class BoardGame : Game {
 	void StartGame() {
 		CreateBoard();
 		mainboard.SetActivePlayer (startingplayer);
-		int gamelength=int.Parse(gameLength.GetSelectionString().Substring(0,1))*60000;
+		int gamelength = -1;
+		if (gameLength.GetSelectionString() != "No timer") gamelength = int.Parse(gameLength.GetSelectionString().Substring(0,1))*60000;
 		clock[0].SetTime(gamelength);
 		clock[1].SetTime(gamelength);
 		state = GameState.CheckWin;
 	}
 
 	public void TimeOut() {
+		if (gameLength.GetSelectionString() == "No timer")
+		{
+			//When no timer is selected timeout will be called every frame
+			//not very performance friendly
+			return;
+		}
 		AbortAIThread ();
 		int winnerindex;
 		if (clock [0].GetTime () == 0)
@@ -238,9 +256,30 @@ public class BoardGame : Game {
 	}
 
 	void FinishGame() {
-		Console.WriteLine("\n\n------------\nFinishGame() call\n-----------------------\n\n");
 		// Check match progress
 		//Console.WriteLine("Finishing game");
+		++gamesPlayed;
+		//If we are comparing AI's with each other a different check needs to be made
+		if(compareAIButton.GetSelection() == 1)
+		{
+			if(gamesPlayed == compareAIGameAmount)
+			{
+				//match finished - print information
+				Console.WriteLine("\nGames Finished\n==========================================\nMin Wins:    {0}\nMax Wins:    {1}\nDraws:       {2}\n==========================================\n", wins[0], wins[1], gamesPlayed-wins[0]-wins[1]);
+				GotoMenu();
+			}
+			else
+			{
+				//next match will start
+				gameLogger.SetBoard(mainboard);
+				gameLogger.LogToConsole();
+				gameLogger.LogToFile(loggedGamesPath + "MONTECARLO20_MINIMAX/game[" + gamesPlayed + "].txt");
+				startingplayer = -startingplayer;
+				StartGame();
+			}
+			return; //return instead of if-else
+		}
+
 		for (int winnerindex=0;winnerindex<=1;winnerindex++) {
 			if (wins [winnerindex] > (matchSize.GetSelection () + 1) / 2) { // Match over
 				message.ShowMessage (playerSelect [winnerindex].GetSelectionString () + " wins the match!");

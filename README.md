@@ -11,6 +11,10 @@ game specific AI's may be implemented in the future.
 The provided engine is a custom C# engine without interface, complete code-based. It relies on a copyrighted sound library
 so that will not be uploaded. 
 
+In the C# project there is an option to compare two AI's, which can be set to 'Normal Games' or 'Compare AI'. 
+This will automatically enable a tracker which will write the gamedata away to a file (not recommended, but no option to turn it off yet,
+except by code) and will print this information into the console.
+
 Current implemented Agents
 =======================================
 Human         // The human player, not really an agent but can play quite well.
@@ -29,3 +33,8 @@ MiniMax       // Recursively loops through all possible board states from the cu
 
 MiniCarlo     // Combination of MonteCarlo and Minimax (Custom name). Will use minimax until a certain depth is
 		 reached, than it will use MonteCarlo, this will save perfermonce on bigger games like connect 4.
+
+
+#Processing Checkers
+=======================================
+A processing project has been added, this will grow out to be checkers so different AI's can be compared in checkers as well.
