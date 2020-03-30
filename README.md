@@ -35,6 +35,13 @@ MiniCarlo     // Combination of MonteCarlo and Minimax (Custom name). Will use m
 		 reached, than it will use MonteCarlo, this will save perfermonce on bigger games like connect 4.
 
 
-#Processing Checkers
+Processing Checkers
 =======================================
-A processing project has been added, this will grow out to be checkers so different AI's can be compared in checkers as well.
+The CheckersGame folder has a Processing project with a checkers game. Now it is important to notice that there can actually be a draw,
+though the game does not recognize this yet. In the checkersGame various different AI's will be implemented as well.
+
+Current implemented Agents
+=======================================
+Human         // The human player, not really an agent but can play quite well.
+
+Random        // Gets all possible moves and picks randomly.

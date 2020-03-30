@@ -1,12 +1,32 @@
 class PlayerAgent extends Agent
 {
-  public PlayerAgent(Board pBoard)
+  public PlayerAgent(Board pBoard, int player)
   {
-    playBoard = pBoard;
+    _playBoard = pBoard;
+    playerID = player;
+    _name = "Player";
   }
   
-  public void MakeMove()
+  public PVector MakeMove()
   {
-    
+    ArrayList<Stone> stones = _playBoard.GetStones(playerID);
+    for(int i = 0; i < stones.size(); ++i)
+    {
+      if(stones.get(i).IsClicked())
+      {
+        _playBoard.SelectStone(stones.get(i));
+      }
+    }
+    if(mousePressed)
+    {
+      PVector tile = _playBoard.GetTileAtPosition(new PVector(mouseX, mouseY));
+      Stone selected = _playBoard.GetSelectedStone();
+      if(selected != null)
+      {
+        PVector stoneTile = selected.GetTile();
+        return tile;
+      }
+    }
+    return null;
   }
 }
