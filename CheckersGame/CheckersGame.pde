@@ -9,6 +9,7 @@ Agent[] _agents;
 Board _board;
 int winner = 0;
 GameState state = GameState.GAME; 
+int activePlayer = 0;
   
 void setup()
 {
@@ -17,7 +18,8 @@ void setup()
   _board = new Board();
   _agents = new Agent[2];
   _agents[0] = new RandomAgent(_board, -1);
-  _agents[1] = new RandomAgent(_board, 1);
+  _agents[1] = new MonteCarloAgent(_board, 1);
+  //_agents[1] = new PlayerAgent(_board, 1);
 }
 
 void draw()
@@ -65,20 +67,29 @@ void updateGame()
     state = GameState.WINNER;
     return;
   }
+  thread("makeMove");
+  _board.Render();
+}
+
+void makeMove()
+{
+  if(_board.GetActivePlayer() == activePlayer) return;
+  println("\n--------------------\nSwitched player\n--------------------\n");
+  activePlayer = _board.GetActivePlayer();
   int player = (int)(_board.GetActivePlayer()/2.0f+1.5f); //converts player to 1/2
   PVector move = _agents[player-1].MakeMove();
   if(move != null)
   {
     _board.MakeMove(move);
+    activePlayer = 0;
   }
-  _board.Render();
 }
 
 void resetGame()
 {
   _board = new Board();
   _agents[0] = new RandomAgent(_board, -1);
-  _agents[1] = new RandomAgent(_board, 1);
+  _agents[1] = new MonteCarloAgent(_board, 1);
   winner = 0;
   state = GameState.GAME;
 }

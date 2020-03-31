@@ -23,9 +23,9 @@ class RandomAgent extends Agent
       int random = (int)random(stoneIds.size());
       int randomStoneId = stoneIds.get(random);
       Stone stone = stones.get(randomStoneId);
-      _board.SelectStone(stone);
+      _playBoard.SelectStone(stone);
             
-      ArrayList<PVector> moves = _board.GetMovesFor(stone);
+      ArrayList<PVector> moves = _playBoard.GetMovesFor(stone);
       if(moves.size() == 0)
       {
         stoneIds.remove(random);
@@ -33,7 +33,7 @@ class RandomAgent extends Agent
       }
       else
       {
-        ArrayList<PVector> jumps = _board.availableJumpsForStone(stone);
+        ArrayList<PVector> jumps = _playBoard.AvailableJumpsForStone(stone);
         if(jumps.size() == 0)
         {
           random = (int)random(moves.size());

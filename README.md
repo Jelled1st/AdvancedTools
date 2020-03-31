@@ -25,7 +25,7 @@ Random+       // Gets all possible moves and picks randomly. However if there is
               // will pick that move.
 
 MonteCarlo    // Plays an amount of games on every possible move on the current board. Then it will play the move
-              // with the most wins.
+              // with the highest score (determined on wins).
 
 MiniMax       // Recursively loops through all possible board states from the current state and will pick the move
               // with the best future. This is a heavy AI on bigger games than Tic-Tac-Toe, that's why there is depth
@@ -45,3 +45,6 @@ Current implemented Agents
 Human         // The human player, not really an agent but can play quite well.
 
 Random        // Gets all possible moves and picks randomly.
+
+MonteCarlo    // Plays an amount of games on every possible move on the current board. Then it will play the move
+              // with the highest score (determined on wins).

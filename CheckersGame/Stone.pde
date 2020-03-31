@@ -19,6 +19,11 @@ class Stone
     return _color;
   }
   
+  public color GetStroke()
+  {
+    return _stroke;
+  }
+  
   public void SetTile(PVector pTile)
   {
     _tile = pTile;
@@ -45,7 +50,7 @@ class Stone
     _selected = pSelected;
   }
   
-  public void Render()
+  public void Render(int num)
   {
     ellipseMode(CENTER);
     fill(_color);
@@ -60,11 +65,20 @@ class Stone
       strokeWeight(4);
     }
     ellipse(getPosition().x, getPosition().y , 40, 40);
+    fill(_stroke);
+    textAlign(CENTER, CENTER);
+    text(num, getPosition().x, getPosition().y);
   }
   
   private PVector getPosition()
   {
     return new PVector(50 + 25 + _tile.x * 50, 50 + 25 + _tile.y * 50);
+  }
+  
+  public boolean Compare(Stone pStone)
+  {
+    if(_color == pStone._color && _tile == pStone._tile) return true;
+    else return false;
   }
   
 }

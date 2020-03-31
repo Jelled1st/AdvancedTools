@@ -2,8 +2,8 @@ class Board
 {
   color whiteColor = color(255,255,220);
   color blackColor = color(84,27,33);
-  public ArrayList<Stone> _blackStones;
-  public ArrayList<Stone> _whiteStones;
+  ArrayList<Stone> _blackStones;
+  ArrayList<Stone> _whiteStones;
   int _activePlayer = -1;
   Stone _selectedStone = null;
   
@@ -29,17 +29,68 @@ class Board
       _whiteStones.add(white);
     }
   }
+  
+  private Board(Board pCopy)
+  {
+    whiteColor = pCopy.whiteColor;
+    blackColor = pCopy.blackColor;
+    _blackStones = new ArrayList<Stone>();
+    _whiteStones = new ArrayList<Stone>();
+    for(int i = 0; i < pCopy._whiteStones.size(); ++i)
+    {
+      Stone stone = pCopy._whiteStones.get(i);
+      _whiteStones.add(new Stone(this, stone.GetTile(), stone.GetColor(), stone.GetStroke()));
+    }
+    for(int i = 0; i < pCopy._blackStones.size(); ++i)
+    {
+      Stone stone = pCopy._blackStones.get(i);
+      _blackStones.add(new Stone(this, stone.GetTile(), stone.GetColor(), stone.GetStroke()));
+    }
+    _activePlayer = pCopy._activePlayer;
+    if(pCopy._selectedStone == null) _selectedStone = null;
+    else
+    {
+      if(pCopy._selectedStone.GetColor() == pCopy.whiteColor) _selectedStone = _whiteStones.get(pCopy.GetSelectedIndex());
+      else _selectedStone = _blackStones.get(pCopy.GetSelectedIndex());
+    }
+  }
+  
+  public int GetSelectedIndex()
+  {
+    if(_selectedStone == null) return -1;
+    if(_selectedStone.GetColor() == whiteColor)
+    {
+      for(int i = 0; i < _whiteStones.size(); ++i)
+      {
+        if(_selectedStone == _whiteStones.get(i)) return i;
+      }
+    }
+    else
+    {
+      for(int i = 0; i < _blackStones.size(); ++i)
+      {
+        if(_selectedStone == _blackStones.get(i)) return i;
+      }
+    }
+    return -1;
+  }
+  
+  public Board Copy()
+  {
+    Board copy = new Board(this);
+    return copy;
+  }
     
   public void Render()
   {
     drawBoard(8, 8);
     for(int i = 0; i < _whiteStones.size(); ++i)
     {
-      _whiteStones.get(i).Render();
+      _whiteStones.get(i).Render(i);
     }
     for(int i = 0; i < _blackStones.size(); ++i)
     {
-      _blackStones.get(i).Render();
+      _blackStones.get(i).Render(i);
     }
   }
   
@@ -55,10 +106,66 @@ class Board
     return _activePlayer;
   }
   
+  public boolean IsValidMove(PVector move)
+  {
+    if(_selectedStone == null) return false;
+    boolean validMove = false;
+    
+    if(move.x < 0 || move.x >= 8 || move.y < 0 || move.y >= 8) return false;
+    
+    PVector relativeMove = new PVector(move.x-_selectedStone.GetTile().x, move.y-_selectedStone.GetTile().y);
+    
+    boolean jumpMove = false;
+    
+    //make a hit, get other stone
+    if((relativeMove.x == -2 || relativeMove.x == 2) && (relativeMove.y == -2 || relativeMove.y == 2))
+    {
+      Stone stone = GetStoneAtTile(move);
+      if(stone != null) validMove = false;
+      PVector jumpOver = new PVector(move.x - relativeMove.x/2, move.y - relativeMove.y/2);
+      stone = GetStoneAtTile(jumpOver); 
+      if(stone != null)
+      {
+        if(_activePlayer == -1 && stone.GetColor() == blackColor)
+        {
+          validMove = true;
+          jumpMove = true;
+        }
+        else if(_activePlayer == 1 && stone.GetColor() == whiteColor)
+        {
+          validMove = true;
+          jumpMove = true;
+        }
+      }
+    }
+    
+    //if the validMove has not yet been set to true
+    //that means that the player missed an available jump
+    //if there is any
+    if(validMove == false && availableJump()) return false;
+    
+    //regular move
+    //cannot go backwards
+    if((relativeMove.x == -1 || relativeMove.x == 1) && (relativeMove.y == -1 || relativeMove.y == 1))
+    {
+      if(_activePlayer == -1 && relativeMove.y == -1) validMove = false;
+      else if(_activePlayer == 1 && relativeMove.y == 1) validMove = false;
+      else
+      {
+        //selected tile and stone are in diagonals of each other
+        Stone stone = GetStoneAtTile(move);
+        if(stone == null) validMove = true;
+      }
+    }
+    
+    return validMove;
+  }
+  
   public boolean MakeMove(PVector move)
   {
     if(_selectedStone == null) return false;
     boolean validMove = false;
+    println("passed move: " + move);
     
     if(move.x < 0 || move.x >= 8 || move.y < 0 || move.y >= 8) return false;
     
@@ -94,29 +201,36 @@ class Board
     //that means that the player missed an available jump
     //if there is any
     if(validMove == false && availableJump()) return false;
-    
-    //regular move
-    //cannot go backwards
-    if((relativeMove.x == -1 || relativeMove.x == 1) && (relativeMove.y == -1 || relativeMove.y == 1))
+    //if the move is already valid, skip this check
+    println("valid move: " + validMove);
+    if(!validMove)
     {
-      if(_activePlayer == -1 && relativeMove.y == -1) validMove = false;
-      else if(_activePlayer == 1 && relativeMove.y == 1) validMove = false;
-      else
+      //regular move
+      //cannot go backwards
+      if((relativeMove.x == -1 || relativeMove.x == 1) && (relativeMove.y == -1 || relativeMove.y == 1))
       {
-        //selected tile and stone are in diagonals of each other
-        Stone stone = GetStoneAtTile(move);
-        if(stone == null) validMove = true;
+        if(_activePlayer == -1 && relativeMove.y == -1) validMove = false;
+        else if(_activePlayer == 1 && relativeMove.y == 1) validMove = false;
+        else
+        {
+          //selected tile and stone are in diagonals of each other
+          Stone stone = GetStoneAtTile(move);
+          if(stone == null) validMove = true;
+        }
       }
     }
-           
+    
+    println("valid move: " + validMove);
     if(validMove)
     {
       _selectedStone.SetTile(move);
+        println("\n\nMove allowed, moved selected stone to " + move);
       //if there is another jump available for the stone that just moved
       //do not switch player, because that player gets to jump again
-      boolean anotherJump = availableJumpsForStone(_selectedStone).size() > 0;
+      boolean anotherJump = AvailableJumpsForStone(_selectedStone).size() > 0;
       if(!jumpMove || !anotherJump)
       {
+        println("Switched active player on board\n\n");
         _activePlayer = -_activePlayer;
         _selectedStone.Selected(false);
         _selectedStone = null;
@@ -130,6 +244,30 @@ class Board
     if(_blackStones.size() == 0) return -1;
     if(_whiteStones.size() == 0) return 1;
     return 0;
+  }
+  
+  //return if there are still available moves
+  public boolean Finished()
+  {
+    if(_whiteStones.size() == 0 || _blackStones.size() == 0) return true;
+    for(int w = 0; w < _whiteStones.size(); ++w)
+    {
+      for(int b = 0; b < _blackStones.size(); ++b)
+      {
+        PVector whiteTile = _whiteStones.get(w).GetTile();
+        PVector blackTile = _blackStones.get(b).GetTile();
+        PVector tileDifference = new PVector(whiteTile.x - blackTile.x, whiteTile.y - blackTile.x);
+        if(tileDifference.y > 0) return false;
+        if(tileDifference.y >= -1)
+        {
+          if(tileDifference.x >= -1 && tileDifference.x <= 1)
+          {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
   }
   
   public boolean SelectStone(Stone pStone)
@@ -151,6 +289,29 @@ class Board
         if(_selectedStone != null) _selectedStone.Selected(false);
         _selectedStone = _blackStones.get(i);
         _selectedStone.Selected(true);
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  public boolean SelectStone(int index)
+  {
+    if(_activePlayer == -1)
+    {
+      if(index > 0 && index < _whiteStones.size())
+      {
+        _selectedStone.Selected(false);
+        _selectedStone = _whiteStones.get(index);
+        return true;
+      }
+    }
+    else
+    {
+      if(index > 0 && index < _blackStones.size())
+      {
+        _selectedStone.Selected(false);
+        _selectedStone = _blackStones.get(index);
         return true;
       }
     }
@@ -192,7 +353,7 @@ class Board
     return null;
   }
   
-  public ArrayList<PVector> availableJumpsForStone(Stone stone)
+  public ArrayList<PVector> AvailableJumpsForStone(Stone stone)
   {
     ArrayList<PVector> jumps = null;
     if(stone == null) return jumps;
@@ -300,7 +461,7 @@ class Board
   public ArrayList<PVector> GetMovesFor(Stone stone)
   {
     ArrayList<PVector> moves = new ArrayList<PVector>();
-    ArrayList<PVector> jumps = availableJumpsForStone(stone);
+    ArrayList<PVector> jumps = AvailableJumpsForStone(stone);
     for(int i = 0; i < jumps.size(); ++i)
     {
       moves.add(jumps.get(i));
@@ -313,7 +474,7 @@ class Board
     for(int d = startD; d < directions.length; ++d)
     {
       PVector tile = new PVector(stone.GetTile().x + directions[d].x, stone.GetTile().y + directions[d].y);
-      if(GetStoneAtTile(tile) == null)
+      if(GetStoneAtTile(tile) == null && tile.x >= 0 && tile.x < 8 && tile.y >= 0 && tile.y < 8)
       {
         moves.add(tile);
       }
