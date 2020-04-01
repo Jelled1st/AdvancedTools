@@ -26,8 +26,7 @@ void resetBoard()
 {
   _board = new Board();
   _agents = new Agent[2];
-  _agents[0] = new RandomAgent(_board, -1);
-  //_agents[0] = new MonteCarloAgent(_board, -1, 100);
+  _agents[0] = new MonteCarloAgent(_board, -1, 1000);
   _agents[1] = new RandomAgent(_board, 1);
 }
 
@@ -35,8 +34,7 @@ void resetGame()
 {
   _board = new Board();
   _agents = new Agent[2];
-  _agents[0] = new RandomAgent(_board, -1);
-  //_agents[0] = new MonteCarloAgent(_board, -1, 100);
+  _agents[0] = new MonteCarloAgent(_board, -1, 1000);
   _agents[1] = new RandomAgent(_board, 1);
   
   wins = new int[2];

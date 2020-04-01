@@ -1,5 +1,7 @@
 class MonteCarloAgent extends Agent
 {
+  boolean debugInfo = false;
+  
   int _samples;
   public MonteCarloAgent(Board pBoard, int player)
   {
@@ -19,7 +21,7 @@ class MonteCarloAgent extends Agent
 
   public PVector MakeMove()
   {
-    float bestScore = -playerID*2; //lower than the lowest score possible
+    float bestScore = -abs(playerID)*2; //lower than the lowest score possible
     PVector bestMove = new PVector(-1, -1);
     Stone bestStone = null;
     
@@ -27,7 +29,7 @@ class MonteCarloAgent extends Agent
 
     //holds all the stones
     ArrayList<Stone> stones = _playBoard.GetStones(_playBoard.GetActivePlayer());
-    println("amount of stones " + stones.size());
+    if(debugInfo) println("amount of stones " + stones.size());
 
     for (int s = 0; s < stones.size(); ++s)
     {
@@ -54,7 +56,7 @@ class MonteCarloAgent extends Agent
           else if (winner == -playerID) ++losses;
         }
         println("done with samples");
-        float score = (wins - losses) / (float)_samples;
+        float score = (losses - wins) / (float)_samples;
         if (score > bestScore)
         {
           println("new highscore, Score: " + score);
@@ -70,11 +72,11 @@ class MonteCarloAgent extends Agent
   
   private int PlayRandomGame(Board pCopy)
   {
-    println("\n---------------------\nRandom play\n---------------------\n");
+    if(debugInfo) println("\n---------------------\nRandom play\n---------------------\n");
     //while loop to loop as many times until the game has reached the end
     while(!pCopy.Finished())
     {
-      println("\tEntering board.finished() loop");
+      if(debugInfo) println("\tEntering board.finished() loop");
       boolean madeMove = false;
       
       ArrayList<Stone> stones = pCopy.GetStones(pCopy.GetActivePlayer());
@@ -82,7 +84,7 @@ class MonteCarloAgent extends Agent
       //it may however occur that a stone cannot make a move and that a new stone needs be chosen
       while(true)
       {
-        println("\t\tEntering pick stone loop, stones.size() " + stones.size());
+        if(debugInfo) println("\t\tEntering pick stone loop, stones.size() " + stones.size());
         if(stones.size() == 0)
         {
           //if there are no stones left to pick from
@@ -108,7 +110,7 @@ class MonteCarloAgent extends Agent
           ArrayList<PVector> jumps = pCopy.AvailableJumpsForStone(stone);
           while(true)
           {
-            println("\t\t\tEntering pick move loop, stone: " + randomStoneId + ", moves: " + moves.size() + ", jumps: " + jumps.size());
+            if(debugInfo) println("\t\t\tEntering pick move loop, stone: " + randomStoneId + ", moves: " + moves.size() + ", jumps: " + jumps.size());
             if(moves.size() == 0)
             {
               //within this loop moves may be removed from the list
@@ -123,7 +125,7 @@ class MonteCarloAgent extends Agent
               int randomMoveId = (int)random(moves.size());
               PVector move = moves.get(randomMoveId);
               madeMove = pCopy.MakeMove(move);
-              println("\t\t\tTried move: " + madeMove);
+              if(debugInfo) println("\t\t\tTried move: " + madeMove);
               if(!madeMove) moves.remove(randomMoveId);
             }
             else
@@ -132,7 +134,7 @@ class MonteCarloAgent extends Agent
               int randomJumpId = (int)random(jumps.size());
               PVector move = jumps.get(randomJumpId);
               madeMove = pCopy.MakeMove(move);
-              println("\t\t\tTried move: " + madeMove);
+              if(debugInfo) println("\t\t\tTried move: " + madeMove);
               if(!madeMove)
               {
                 jumps.remove(randomJumpId);
@@ -186,7 +188,7 @@ class MonteCarloAgent extends Agent
           return pCopy.CheckWinner();
         }
         int randomStoneId = stoneIds.get(random);
-        println("got random stone id");
+        if(debugInfo) println("got random stone id");
         Stone stone = stones.get(randomStoneId);
         pCopy.SelectStone(stone);
 
@@ -209,14 +211,14 @@ class MonteCarloAgent extends Agent
                 break;
               }
               int moveId = (int)random(moves.size());
-              println("moveid " + moveId);
+              if(debugInfo) println("moveid " + moveId);
               move = moves.get(moveId);
-              println("making move from " + stone.GetTile() + " to " + move);
+              if(debugInfo) println("making move from " + stone.GetTile() + " to " + move);
               boolean madeMove = pCopy.MakeMove(move);
               if (madeMove) break;
               else
               {
-                println("could not make move");
+                if(debugInfo) println("could not make move");
                 moves.remove(moveId);
                 continue;
               }
@@ -233,12 +235,12 @@ class MonteCarloAgent extends Agent
               }
               random = (int)random(jumps.size());
               move = jumps.get(random);
-              println("making move from " + stone.GetTile() + " to " + move);
+              if(debugInfo) println("making move from " + stone.GetTile() + " to " + move);
               boolean madeMove = pCopy.MakeMove(move);
               if (madeMove) break;
               else
               {
-                println("could not make move");
+                if(debugInfo) println("could not make move");
                 continue;
               }
             }
