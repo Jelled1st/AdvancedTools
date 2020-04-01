@@ -22,6 +22,8 @@ class MonteCarloAgent extends Agent
     float bestScore = -playerID*2; //lower than the lowest score possible
     PVector bestMove = new PVector(-1, -1);
     Stone bestStone = null;
+    
+    boolean hasToJump = _playBoard.AvailableJump();
 
     //holds all the stones
     ArrayList<Stone> stones = _playBoard.GetStones(_playBoard.GetActivePlayer());
@@ -32,7 +34,9 @@ class MonteCarloAgent extends Agent
       println("Evaluating stone " + s);
       _playBoard.SelectStone(stones.get(s));
       int stoneIndex = _playBoard.GetSelectedIndex();
-      ArrayList<PVector> moves = _playBoard.GetMovesFor(stones.get(s));
+      ArrayList<PVector> moves;
+      if(hasToJump) moves = _playBoard.AvailableJumpsForStone(stones.get(s));
+      else moves = _playBoard.GetMovesFor(stones.get(s));
       //cycle through all the stones
       for (int m = 0; m < moves.size(); ++m)
       {

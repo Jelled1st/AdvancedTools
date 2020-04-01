@@ -142,7 +142,7 @@ class Board
     //if the validMove has not yet been set to true
     //that means that the player missed an available jump
     //if there is any
-    if(validMove == false && availableJump()) return false;
+    if(validMove == false && AvailableJump()) return false;
     
     //regular move
     //cannot go backwards
@@ -165,7 +165,6 @@ class Board
   {
     if(_selectedStone == null) return false;
     boolean validMove = false;
-    println("passed move: " + move);
     
     if(move.x < 0 || move.x >= 8 || move.y < 0 || move.y >= 8) return false;
     
@@ -200,9 +199,8 @@ class Board
     //if the validMove has not yet been set to true
     //that means that the player missed an available jump
     //if there is any
-    if(validMove == false && availableJump()) return false;
+    if(validMove == false && AvailableJump()) return false;
     //if the move is already valid, skip this check
-    println("valid move: " + validMove);
     if(!validMove)
     {
       //regular move
@@ -220,17 +218,14 @@ class Board
       }
     }
     
-    println("valid move: " + validMove);
     if(validMove)
     {
       _selectedStone.SetTile(move);
-        println("\n\nMove allowed, moved selected stone to " + move);
       //if there is another jump available for the stone that just moved
       //do not switch player, because that player gets to jump again
       boolean anotherJump = AvailableJumpsForStone(_selectedStone).size() > 0;
       if(!jumpMove || !anotherJump)
       {
-        println("Switched active player on board\n\n");
         _activePlayer = -_activePlayer;
         _selectedStone.Selected(false);
         _selectedStone = null;
@@ -250,20 +245,26 @@ class Board
   public boolean Finished()
   {
     if(_whiteStones.size() == 0 || _blackStones.size() == 0) return true;
-    for(int w = 0; w < _whiteStones.size(); ++w)
+    // If white can't make a move while it is its turn, the game is finished
+    if(_activePlayer == -1)
+    {
+      for(int w = 0; w < _whiteStones.size(); ++w)
+      {
+        int movesLength = GetMovesFor(_whiteStones.get(w)).size();
+        if(movesLength > 0)
+        {
+          return false;
+        }
+      }
+    }
+    else // If black can't make a move while it is its turn, the game is finished
     {
       for(int b = 0; b < _blackStones.size(); ++b)
       {
-        PVector whiteTile = _whiteStones.get(w).GetTile();
-        PVector blackTile = _blackStones.get(b).GetTile();
-        PVector tileDifference = new PVector(whiteTile.x - blackTile.x, whiteTile.y - blackTile.x);
-        if(tileDifference.y > 0) return false;
-        if(tileDifference.y >= -1)
+        int movesLength = GetMovesFor(_blackStones.get(b)).size();
+        if(movesLength > 0)
         {
-          if(tileDifference.x >= -1 && tileDifference.x <= 1)
-          {
-            return false;
-          }
+          return false;
         }
       }
     }
@@ -368,13 +369,10 @@ class Board
           if(other != null && other.GetColor() == blackColor)
           {
             PVector overTile = new PVector(tile.x + directions[d].x, tile.y + directions[d].y);
-            if(overTile.x > 0 && overTile.x < 8 && overTile.y > 0 && overTile.y < 8)
+            if(overTile.x >= 0 && overTile.x < 8 && overTile.y >= 0 && overTile.y < 8 && GetStoneAtTile(overTile) == null)
             {
-              if(GetStoneAtTile(overTile) == null)
-              {
-                //there is no stone behind the black stone
-                jumps.add(overTile);
-              }
+              //there is no stone behind the black stone
+              jumps.add(overTile);
             }
           }
         }
@@ -389,13 +387,10 @@ class Board
           if(other != null && other.GetColor() == whiteColor)
           {
             PVector overTile = new PVector(tile.x + directions[d].x, tile.y + directions[d].y);
-            if(overTile.x > 0 && overTile.x < 8 && overTile.y > 0 && overTile.y < 8)
+            if(overTile.x >= 0 && overTile.x < 8 && overTile.y >= 0 && overTile.y < 8 && GetStoneAtTile(overTile) == null)
             {
-              if(GetStoneAtTile(overTile) == null)
-              {
-                //there is no stone behind the black stone
-                jumps.add(overTile);
-              }
+              //there is no stone behind the black stone
+              jumps.add(overTile);
             }
           }
         }
@@ -403,7 +398,7 @@ class Board
     }
   }
   
-  private boolean availableJump()
+  public boolean AvailableJump()
   {
     PVector[] directions = { new PVector(1, 1), new PVector(-1, 1), new PVector(1, -1), new PVector(-1, -1) };
     if(_activePlayer == -1)
@@ -469,12 +464,17 @@ class Board
     PVector[] directions = { new PVector(1, 1), new PVector(-1, 1), new PVector(1, -1), new PVector(-1, -1) };
     //for white the player can only move down (except for jumping)
     int startD = 0;
+    int endD = 2;
     //for black the player can only move up (except for jumping)
-    if(_activePlayer == 1) startD = 2;
-    for(int d = startD; d < directions.length; ++d)
+    if(_activePlayer == 1)
+    {
+      startD = 2;
+      endD = 4;
+    }
+    for(int d = startD; d < endD; ++d)
     {
       PVector tile = new PVector(stone.GetTile().x + directions[d].x, stone.GetTile().y + directions[d].y);
-      if(GetStoneAtTile(tile) == null && tile.x >= 0 && tile.x < 8 && tile.y >= 0 && tile.y < 8)
+      if(tile.x >= 0 && tile.x < 8 && tile.y >= 0 && tile.y < 8 && GetStoneAtTile(tile) == null)
       {
         moves.add(tile);
       }
