@@ -7,35 +7,53 @@ enum GameState
 
 Agent[] _agents;
 Board _board;
-GameState state = GameState.GAME; 
+GameState state = GameState.MENU; 
 int activePlayer = 0;
 
 int[] wins;
 
 int gamesToPlay = 100;
 int gamesPlayed;
+
+boolean pressedButton = false;
+
+Button selectAgentButtons[] = new Button[2];
+Button startButton;
   
 void setup()
 {
   size(500,500);
   
+  _agents = new Agent[2];
+  
+  startButton = new Button(width / 2, 475, 100, 30, "Start!");
+  
+  selectAgentButtons[0] = new Button(75, 475, 100, 30, "Player");
+  selectAgentButtons[1] = new Button(width-75, 475, 100, 30, "Player");
+  
+  for(int i = 0; i < selectAgentButtons.length; ++i)
+  {
+    //skip zero in the agents, since that is the default selection
+    for(int a = 1; a < AgentTypes.AMOUNT; ++a)
+    {
+      selectAgentButtons[i].AddOption(AgentTypes.ToString(a));
+    }
+  }
+  
+  _board = new Board();
+  _agents[0] = new PlayerAgent(_board, -1);
+  _agents[1] = new PlayerAgent(_board, 1);
   resetGame();
 }
 
 void resetBoard()
 {
-  _board = new Board();
-  _agents = new Agent[2];
-  _agents[0] = new MonteCarloAgent(_board, -1, 1000);
-  _agents[1] = new RandomAgent(_board, 1);
+  _board.Reset();
 }
 
 void resetGame()
 {
-  _board = new Board();
-  _agents = new Agent[2];
-  _agents[0] = new MonteCarloAgent(_board, -1, 1000);
-  _agents[1] = new RandomAgent(_board, 1);
+  _board.Reset();
   
   wins = new int[2];
   wins[0] = 0;
@@ -47,15 +65,32 @@ void draw()
 {
   background(255);
   if(state == GameState.GAME) updateGame();
-  showHUD();
+  handleUI();
   if(keyPressed && (key == 'R' || key == 'r'))
   {
     resetGame();
   }
 }
 
-void showHUD()
+void handleUI()
 {
+  for(int i = 0; i < selectAgentButtons.length; ++i)
+  {
+    selectAgentButtons[i].Render();
+    if(selectAgentButtons[i].Pressed())
+    {
+      _agents[i] = GetAgent(selectAgentButtons[i].GetSelected(), _board, i*2-1);
+    }
+  }
+  if(state != GameState.GAME)
+  {
+    startButton.Render();
+    if(startButton.Pressed())
+    {
+      state = GameState.GAME;
+      resetGame();
+    }
+  }
   textSize(16);
   fill(0, 0, 0);
   textAlign(LEFT, TOP);
@@ -65,10 +100,13 @@ void showHUD()
   text("Player max: " + _agents[1].Name(), width-5, 5);
   text("wins: " + wins[1], width-5, 25);
   
-  fill(255, 0, 0);
-  textAlign(CENTER, TOP);
-  text("Turn of: " + _board.GetActivePlayer(), width / 2, 30);
-  text("Played " + gamesPlayed + " games", width /2, 450);
+  if(state == GameState.GAME)
+  {
+    fill(255, 0, 0);
+    textAlign(CENTER, TOP);
+    text("Turn of: " + _board.GetActivePlayer(), width / 2, 30);
+    text("Played " + gamesPlayed + " games", width /2, 450);
+  }
   if(state == GameState.WINNER)
   {
     textSize(24);
@@ -81,7 +119,7 @@ void showHUD()
     text("Press mouse to continue!", width /2, height / 4 * 3 + 30 );
     if(mousePressed)
     {
-      state = GameState.GAME;
+      state = GameState.MENU;
       resetGame();
     }
   }
