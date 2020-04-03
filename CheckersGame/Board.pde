@@ -267,7 +267,7 @@ class Board
     //if(_whiteStones.size() == 0) return 1;
     
     int diff = _blackStones.size() - _whiteStones.size();
-    return (diff) == 0 ? 0 : diff > 0 ? -1 : 1;
+    return (diff) == 0 ? 0 : diff > 0 ? 1 : -1;
   }
   
   //return if there are still available moves

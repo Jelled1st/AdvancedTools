@@ -1,20 +1,28 @@
 class MonteCarloAgent extends Agent
 {
-  boolean debugInfo = false;
+  final static boolean debugInfo = false;
   int _seeds[];
   int _samples;
+  int _playDepth;
   
   public MonteCarloAgent(Board pBoard, int player)
   {
-    this(pBoard, player, 25);
+    this(pBoard, player, 25, -1);
   }
 
   public MonteCarloAgent(Board pBoard, int player, int pSamples)
   {
+    this(pBoard, player, pSamples, -1);
+  }
+
+  public MonteCarloAgent(Board pBoard, int player, int pSamples, int pDepth)
+  {
     _playBoard = pBoard;
     playerID = player;
+    _playDepth = pDepth;
     _samples = pSamples;
-    _name = "M-Carlo " + _samples;
+    _name = "MCarlo_" + _samples;
+    if(pDepth != -1) _name += "D" + pDepth;
     _seeds = new int[_samples];
     for(int i = 0; i < _samples; ++i) {
       _seeds[i] = (int)random(1000000);
@@ -55,7 +63,7 @@ class MonteCarloAgent extends Agent
           Board copy = _playBoard.Copy();
           copy.SelectStone(stoneIndex); //this should select the 'same' stone on the copy board
           copy.MakeMove(moves.get(m)); //make the move
-          int winner = PlayRandomGame(copy, _seeds[i]);
+          int winner = PlayRandomGame(copy, _seeds[i], _playDepth);
           if (winner == playerID) ++wins;
           else if (winner == -playerID) ++losses;
         }
@@ -77,10 +85,23 @@ class MonteCarloAgent extends Agent
   
   private int PlayRandomGame(Board pCopy, int seed)
   {
+    return PlayRandomGame(pCopy, seed, -1);
+  }
+  
+  private int PlayRandomGame(Board pCopy, int seed, int pDepth)
+  {
+    if(debugInfo) 
+    {
+      println("\n------------------------------\n" +
+              "Random play\n" + 
+              "Attributes:\n" +
+              "\tDepth: " + pDepth + "\n" +
+              "------------------------------\n");
+    }
     randomSeed(seed);
-    if(debugInfo) println("\n---------------------\nRandom play\n---------------------\n");
-    //while loop to loop as many times until the game has reached the end
-    while(!pCopy.Finished())
+    int depth = 0;
+    //while the game is not finished and depth has not been reached 
+    while(!(pCopy.Finished() || depth == pDepth))
     {
       if(debugInfo) println("\tEntering board.finished() loop");
       boolean madeMove = false;
@@ -132,7 +153,10 @@ class MonteCarloAgent extends Agent
               PVector move = moves.get(randomMoveId);
               madeMove = pCopy.MakeMove(move);
               if(debugInfo) println("\t\t\tTried move: " + madeMove);
-              if(!madeMove) moves.remove(randomMoveId);
+              if(!madeMove)
+              {
+                moves.remove(randomMoveId);
+              }
             }
             else
             {
@@ -148,7 +172,11 @@ class MonteCarloAgent extends Agent
               
             } //end of if-else // normal move or jump
             
-            if(madeMove) break;
+            if(madeMove)
+            {
+              ++depth;
+              break;
+            }
           } //end of while // trying to apply the move
           
           if(moves.size() == 0)
@@ -162,102 +190,7 @@ class MonteCarloAgent extends Agent
       } //end of while // picking a random stone
       
     } //end of while loop // board.finished
+    if(debugInfo) println("Exited with depth: " + depth);
     return pCopy.CheckWinner();
-  }
-
-  //be sure to pass in a copy of the board
-  private int PlayRandomGameOld(Board pCopy)
-  {
-    while (true)
-    {
-      //make a random move
-      //same code as the random agent
-      IntList stoneIds = new IntList();
-      ArrayList<Stone> stones = pCopy.GetStones(pCopy.GetActivePlayer());
-      for (int i = 0; i < stones.size(); ++i)
-      {
-        stoneIds.append(i);
-      }
-
-      println("stone ids " + stoneIds.size());
-
-      PVector move;
-
-
-      while (true)
-      {
-        int random = (int)random(stoneIds.size());
-        println("random stone id: " + random + " out of " + stoneIds.size());
-        if (stoneIds.size() == 0)
-        {
-          //no stones are left to make a move
-          return pCopy.CheckWinner();
-        }
-        int randomStoneId = stoneIds.get(random);
-        if(debugInfo) println("got random stone id");
-        Stone stone = stones.get(randomStoneId);
-        pCopy.SelectStone(stone);
-
-        ArrayList<PVector> moves = pCopy.GetMovesFor(stone);
-        if (moves.size() == 0)
-        {
-          stoneIds.remove(random);
-          break;
-        } 
-        else
-        {
-          ArrayList<PVector> jumps = pCopy.AvailableJumpsForStone(stone);
-          if (jumps.size() == 0)
-          {
-            while(true)
-            {
-              if(moves.size() == 0)
-              {
-                stoneIds.remove(random);
-                break;
-              }
-              int moveId = (int)random(moves.size());
-              if(debugInfo) println("moveid " + moveId);
-              move = moves.get(moveId);
-              if(debugInfo) println("making move from " + stone.GetTile() + " to " + move);
-              boolean madeMove = pCopy.MakeMove(move);
-              if (madeMove) break;
-              else
-              {
-                if(debugInfo) println("could not make move");
-                moves.remove(moveId);
-                continue;
-              }
-            }
-          } 
-          else
-          {
-            while(true)
-            {
-              if(moves.size() == 0)
-              {
-                stoneIds.remove(random);
-                break;
-              }
-              random = (int)random(jumps.size());
-              move = jumps.get(random);
-              if(debugInfo) println("making move from " + stone.GetTile() + " to " + move);
-              boolean madeMove = pCopy.MakeMove(move);
-              if (madeMove) break;
-              else
-              {
-                if(debugInfo) println("could not make move");
-                continue;
-              }
-            }
-          }
-        }
-      }
-
-      //now check if there are still available moves
-      //if there are continue the loop
-      //if there aren't return the winner
-      if (pCopy.Finished()) return pCopy.CheckWinner();
-    }
   }
 }
