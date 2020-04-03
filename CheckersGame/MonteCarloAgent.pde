@@ -1,14 +1,12 @@
 class MonteCarloAgent extends Agent
 {
   boolean debugInfo = false;
-  
+  int _seeds[];
   int _samples;
+  
   public MonteCarloAgent(Board pBoard, int player)
   {
-    _playBoard = pBoard;
-    playerID = player;
-    _samples = 25;
-    _name = "M-Carlo 25";
+    this(pBoard, player, 25);
   }
 
   public MonteCarloAgent(Board pBoard, int player, int pSamples)
@@ -17,15 +15,20 @@ class MonteCarloAgent extends Agent
     playerID = player;
     _samples = pSamples;
     _name = "M-Carlo " + _samples;
+    _seeds = new int[_samples];
+    for(int i = 0; i < _samples; ++i) {
+      _seeds[i] = (int)random(1000000);
+    }
   }
 
   public PVector MakeMove()
   {
+    //int seed = (int)random(1000000);
     float bestScore = -abs(playerID)*2; //lower than the lowest score possible
     PVector bestMove = new PVector(-1, -1);
     Stone bestStone = null;
     
-    boolean hasToJump = _playBoard.AvailableJump();
+    boolean hasToJump = _playBoard.AvailableJump() && _playBoard.requiredJump;
 
     //holds all the stones
     ArrayList<Stone> stones = _playBoard.GetStones(_playBoard.GetActivePlayer());
@@ -46,17 +49,19 @@ class MonteCarloAgent extends Agent
         int wins = 0;
         int losses = 0;
         //cycle through all the moves for each stone
+        //randomSeed(seed);
         for (int i = 0; i < _samples; ++i)
         {
           Board copy = _playBoard.Copy();
           copy.SelectStone(stoneIndex); //this should select the 'same' stone on the copy board
           copy.MakeMove(moves.get(m)); //make the move
-          int winner = PlayRandomGame(copy);
+          int winner = PlayRandomGame(copy, _seeds[i]);
           if (winner == playerID) ++wins;
           else if (winner == -playerID) ++losses;
         }
         println("done with samples");
-        float score = (losses - wins) / (float)_samples;
+        float score = (wins - losses) / (float)_samples;
+        //float score = (losses - wins) / (float)_samples;
         if (score > bestScore)
         {
           println("new highscore, Score: " + score);
@@ -70,8 +75,9 @@ class MonteCarloAgent extends Agent
     return bestMove;
   }
   
-  private int PlayRandomGame(Board pCopy)
+  private int PlayRandomGame(Board pCopy, int seed)
   {
+    randomSeed(seed);
     if(debugInfo) println("\n---------------------\nRandom play\n---------------------\n");
     //while loop to loop as many times until the game has reached the end
     while(!pCopy.Finished())

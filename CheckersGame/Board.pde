@@ -7,6 +7,8 @@ class Board
   int _activePlayer = -1;
   Stone _selectedStone = null;
   
+  public boolean requiredJump = false;
+  
   public Board()
   {
     _blackStones = new ArrayList<Stone>();
@@ -167,7 +169,7 @@ class Board
     //if the validMove has not yet been set to true
     //that means that the player missed an available jump
     //if there is any
-    if(validMove == false && AvailableJump()) return false;
+    if(validMove == false && AvailableJump() && requiredJump) return false;
     
     //regular move
     //cannot go backwards
@@ -224,7 +226,7 @@ class Board
     //if the validMove has not yet been set to true
     //that means that the player missed an available jump
     //if there is any
-    if(validMove == false && AvailableJump()) return false;
+    if(validMove == false && AvailableJump() && requiredJump) return false;
     //if the move is already valid, skip this check
     if(!validMove)
     {
@@ -261,9 +263,11 @@ class Board
   
   public int CheckWinner()
   {
-    if(_blackStones.size() == 0) return -1;
-    if(_whiteStones.size() == 0) return 1;
-    return 0;
+    //if(_blackStones.size() == 0) return -1;
+    //if(_whiteStones.size() == 0) return 1;
+    
+    int diff = _blackStones.size() - _whiteStones.size();
+    return (diff) == 0 ? 0 : diff > 0 ? -1 : 1;
   }
   
   //return if there are still available moves

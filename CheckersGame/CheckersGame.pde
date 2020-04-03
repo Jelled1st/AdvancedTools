@@ -68,6 +68,7 @@ void draw()
   handleUI();
   if(keyPressed && (key == 'R' || key == 'r'))
   {
+    state = GameState.MENU;
     resetGame();
   }
 }
@@ -111,13 +112,14 @@ void handleUI()
   {
     textSize(24);
     fill(0, 0, 255);
+    textAlign(CENTER);
     text("Min Wins: " + wins[0], width / 2, height / 4);
     text("Max wins: " + wins[1], width / 2, height / 4 + 30);
     textSize(18);
     text("Total games played: " + gamesPlayed, width / 2, height / 4 * 3);
     textSize(26);
-    text("Press mouse to continue!", width /2, height / 4 * 3 + 30 );
-    if(mousePressed)
+    text("Press space to continue!", width /2, height / 4 * 3 + 30 );
+    if(keyPressed && key == ' ')
     {
       state = GameState.MENU;
       resetGame();
@@ -127,10 +129,10 @@ void handleUI()
 
 void updateGame()
 {
-  int winner = _board.CheckWinner();
   //if there is a winner or if the game is finished
-  if(winner != 0 || _board.Finished())
+  if(_board.Finished())
   {
+    int winner = _board.CheckWinner();
     println("\n----------------------\nWe have a result: " + winner + "\n----------------------\n");
     handleWin(winner);
     return;
