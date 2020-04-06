@@ -39,6 +39,12 @@ class Button
     else if(selectedOption < 0) selectedOption = options.size() - 1;
   }
   
+  public void SetSelected(int option)
+  {
+    selectedOption = option;
+    cycleOptions(0);
+  }
+  
   public int GetSelected()
   {
     return selectedOption;
@@ -49,6 +55,7 @@ class Button
     stroke(0);
     rectMode(CENTER);
     textAlign(CENTER, CENTER);
+    textSize(18);
     //button 1
     fill(200, 200, 200);
     rect(position.x, position.y, size.x, size.y);
@@ -58,7 +65,7 @@ class Button
 
   public boolean Pressed()
   {
-    if (mouseX <= position.x+size.x && mouseX >= position.x-size.x && mouseY <= position.y+size.y && mouseY >= position.y-size.y && mousePressed)
+    if (mouseX <= position.x+size.x/2 && mouseX >= position.x-size.x/2 && mouseY <= position.y+size.y/2 && mouseY >= position.y-size.y/2 && mousePressed)
     {
       if (continuesPress || !pressed)
       {

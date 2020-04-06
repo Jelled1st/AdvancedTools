@@ -18,4 +18,9 @@ abstract class Agent
   {
     return _name;
   }
+  
+  public void Reset()
+  {
+    return;
+  }
 }

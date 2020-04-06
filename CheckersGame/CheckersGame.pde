@@ -19,6 +19,8 @@ boolean pressedButton = false;
 
 Button selectAgentButtons[] = new Button[2];
 Button startButton;
+
+boolean testing = true;
   
 void setup()
 {
@@ -44,15 +46,32 @@ void setup()
   _agents[0] = new PlayerAgent(_board, -1);
   _agents[1] = new PlayerAgent(_board, 1);
   resetGame();
+  
+  if(testing)
+  {
+    selectAgentButtons[0].SetSelected(1);
+    selectAgentButtons[1].SetSelected(3);
+    
+    _agents[0] = GetAgent(selectAgentButtons[0].GetSelected(), _board, -1);
+    _agents[1] = GetAgent(selectAgentButtons[1].GetSelected(), _board, 1);
+  }
 }
 
 void resetBoard()
 {
+  for(int i = 0; i < _agents.length; ++i)
+  {
+    _agents[i].Reset();
+  }
   _board.Reset();
 }
 
 void resetGame()
 {
+  for(int i = 0; i < _agents.length; ++i)
+  {
+    _agents[i].Reset();
+  }
   _board.Reset();
   
   wins = new int[2];

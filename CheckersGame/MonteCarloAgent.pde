@@ -28,6 +28,14 @@ class MonteCarloAgent extends Agent
       _seeds[i] = (int)random(1000000);
     }
   }
+  
+  public void Reset()
+  {
+    _seeds = new int[_samples];
+    for(int i = 0; i < _samples; ++i) {
+      _seeds[i] = (int)random(1000000);
+    }
+  }
 
   public PVector MakeMove()
   {
