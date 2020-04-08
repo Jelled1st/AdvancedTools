@@ -369,15 +369,21 @@ class Board
   {
     for(int i = 0; i < _whiteStones.size(); ++i)
     {
-      PVector stoneTile = _whiteStones.get(i).GetTile();
-      if(stoneTile.x == pTile.x && stoneTile.y == pTile.y) return _whiteStones.get(i);
+      if(_whiteStones.get(i) != null)
+      {
+        PVector stoneTile = _whiteStones.get(i).GetTile();
+        if(stoneTile.x == pTile.x && stoneTile.y == pTile.y) return _whiteStones.get(i);
+      }
     }
     for(int i = 0; i < _blackStones.size(); ++i)
     {
-      PVector stoneTile = _blackStones.get(i).GetTile();
-      if(stoneTile.x == pTile.x && stoneTile.y == pTile.y)
+      if(_blackStones.get(i) != null)
       {
-        return _blackStones.get(i);
+        PVector stoneTile = _blackStones.get(i).GetTile();
+        if(stoneTile.x == pTile.x && stoneTile.y == pTile.y)
+        {
+          return _blackStones.get(i);
+        }
       }
     }
     return null;

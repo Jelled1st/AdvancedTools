@@ -29,6 +29,7 @@ class RandomAgent extends Agent
       if(moves.size() == 0)
       {
         stoneIds.remove(random);
+        if(stoneIds.size() == 0) return new PVector(-1, -1);
         continue;
       }
       else
