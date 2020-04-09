@@ -193,4 +193,9 @@ abstract class SquareBoard : GameBoard {
 	{
 		return _width * _height / 2;
 	}
+
+	public override int GetMaxMoves()
+	{
+		return _width * _height;
+	}
 }

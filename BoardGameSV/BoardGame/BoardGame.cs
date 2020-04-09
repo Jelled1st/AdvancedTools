@@ -271,9 +271,9 @@ public class BoardGame : Game {
 			else
 			{
 				//next match will start
-				gameLogger.SetBoard(mainboard);
-				gameLogger.LogToConsole();
-				gameLogger.LogToFile(loggedGamesPath + "MONTECARLO20_MINIMAX/game[" + gamesPlayed + "].txt");
+				//gameLogger.SetBoard(mainboard);
+				//gameLogger.LogToConsole();
+				//gameLogger.LogToFile(loggedGamesPath + "MONTECARLO20_MINIMAX/game[" + gamesPlayed + "].txt");
 				startingplayer = -startingplayer;
 				StartGame();
 			}
@@ -372,10 +372,10 @@ public class BoardGame : Game {
 			playerIndicator [activeplayerindex].color = 0xffffffff; 
 			clock [activeplayerindex].SetActive (false);
 
-			Console.WriteLine ("Making move {0} for player {1}", _move, mainboard.Symbol (mainboard.GetActivePlayer ()));
+			//Console.WriteLine ("Making move {0} for player {1}", _move, mainboard.Symbol (mainboard.GetActivePlayer ()));
 			mainboard.MakeMove (_move);
-			Console.WriteLine (mainboard.ToString ());
-			Console.WriteLine ("Maximum number of moves left: "+mainboard.MaxMovesLeft ());
+			//Console.WriteLine (mainboard.ToString ());
+			//Console.WriteLine ("Maximum number of moves left: "+mainboard.MaxMovesLeft ());
 			state = GameState.CheckWin;
 			break;
 		//case GameState.Menu:

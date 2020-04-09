@@ -1,0 +1,7 @@
+Winner: 1
+==============================
+Boardsate
+ X O O
+ X X O
+ O X X
+ 0 1 2

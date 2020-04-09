@@ -96,4 +96,6 @@ abstract class GameBoard {
 	/// </summary>
 	/// <returns>The maximum number of moves left on the board.</returns>
 	abstract public int MaxMovesLeft ();
+
+	abstract public int GetMaxMoves();
 }

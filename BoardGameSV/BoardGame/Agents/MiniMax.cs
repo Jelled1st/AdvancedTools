@@ -104,12 +104,12 @@ class MiniMax : Agent {
 				//value is actually the winner of the game
 				int score = getMove(clone, depth + 1);
 
-				if (_onlyBetterScore && score <= bestValue)
+				if (_onlyBetterScore && score < bestValue)
 				{
 					bestValue = score;
 					bestMove = m;
 				}
-				else if (!_onlyBetterScore && score < bestValue)
+				else if (!_onlyBetterScore && score <= bestValue)
 				{
 					bestValue = score;
 					bestMove = m;
@@ -126,12 +126,12 @@ class MiniMax : Agent {
 				//value is actually the winner of the game
 				int score = getMove(clone, depth + 1);
 
-				if (_onlyBetterScore && score >= bestValue)
+				if (_onlyBetterScore && score > bestValue)
 				{
 					bestValue = score;
 					bestMove = m;
 				}
-				else if (!_onlyBetterScore && score > bestValue)
+				else if (!_onlyBetterScore && score >= bestValue)
 				{
 					bestValue = score;
 					bestMove = m;

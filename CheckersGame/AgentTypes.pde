@@ -42,7 +42,7 @@ Agent GetAgent(int type, Board board, int player)
     agent = new MonteCarloAgent(board, player);
     break;
   case AgentTypes.MONTECARLOTESTS:
-    agent = new MonteCarloAgent(board, player, 135);     
+    agent = new MonteCarloAgent(board, player, 50);     
     break;
   case AgentTypes.MONTECARLO80:
     agent = new MonteCarloAgent(board, player, 80);     

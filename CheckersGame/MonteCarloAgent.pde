@@ -52,7 +52,7 @@ class MonteCarloAgent extends Agent
 
     for (int s = 0; s < stones.size(); ++s)
     {
-      println("Evaluating stone " + s);
+      if(debugInfo) println("Evaluating stone " + s);
       _playBoard.SelectStone(stones.get(s));
       int stoneIndex = _playBoard.GetSelectedIndex();
       ArrayList<PVector> moves;
@@ -61,7 +61,7 @@ class MonteCarloAgent extends Agent
       //cycle through all the stones
       for (int m = 0; m < moves.size(); ++m)
       {
-        println("Evaluating move " + m + " out of " + moves.size());
+        if(debugInfo) println("Evaluating move " + m + " out of " + moves.size());
         int wins = 0;
         int losses = 0;
         //cycle through all the moves for each stone
@@ -75,16 +75,16 @@ class MonteCarloAgent extends Agent
           if (winner == playerID) ++wins;
           else if (winner == -playerID) ++losses;
         }
-        println("done with samples");
+        if(debugInfo) println("done with samples");
         float score = (wins - losses) / (float)_samples;
         //float score = (losses - wins) / (float)_samples;
         if (score > bestScore)
         {
-          println("new highscore, Score: " + score);
+          if(debugInfo) println("new highscore, Score: " + score);
           bestScore = score;
           bestMove = moves.get(m);
           bestStone = stones.get(s);
-        } else println("lower score, score was: " + score);
+        } else if(debugInfo) println("lower score, score was: " + score);
       }
     }
     _playBoard.SelectStone(bestStone);
