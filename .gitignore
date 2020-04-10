@@ -368,3 +368,5 @@ GXPEngine/SoundChannel.cs
 Documents/
 ../Documents
 LoggedGames/
+CheckersGame/application.windows64
+CheckersGame/application.windows32

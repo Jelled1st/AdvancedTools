@@ -24,15 +24,23 @@ class MonteCarloAgent extends Agent
     _name = "MCarlo_" + _samples;
     if(pDepth != -1) _name += "D" + pDepth;
     _seeds = new int[_samples];
-    for(int i = 0; i < _samples; ++i) {
+    for(int i = 0; i < _samples; ++i) 
+    {
       _seeds[i] = (int)random(1000000);
     }
+  }
+  
+  public void SetSeed(int index, int pSeed)
+  {
+    if(index < 0 || index >= _samples) return;
+    _seeds[index] = pSeed;
   }
   
   public void Reset()
   {
     _seeds = new int[_samples];
-    for(int i = 0; i < _samples; ++i) {
+    for(int i = 0; i < _samples; ++i) 
+    {
       _seeds[i] = (int)random(1000000);
     }
   }

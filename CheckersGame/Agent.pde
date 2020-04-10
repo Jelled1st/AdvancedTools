@@ -23,4 +23,14 @@ abstract class Agent
   {
     return;
   }
+ 
+  public void SetPlayer(int player)
+  {
+    playerID = player;
+  }
+  
+  public void SetBoard(Board pBoard)
+  {
+    _board = pBoard;
+  }
 }

@@ -34,6 +34,8 @@ MiniMax       // Recursively loops through all possible board states from the cu
 MiniCarlo     // Combination of MonteCarlo and Minimax (Custom name). Will use minimax until a certain depth is
 		 reached, than it will use MonteCarlo, this will save perfermonce on bigger games like connect 4.
 
+Alpha	      // Alpha Beta pruning. gets the best move the same way as minimax. However, if a node is unnecessary to
+		 'calculate' it will skip that node, making it faster 
 
 Processing Checkers
 =======================================

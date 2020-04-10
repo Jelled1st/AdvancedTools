@@ -20,6 +20,8 @@ boolean pressedButton = false;
 Button selectAgentButtons[] = new Button[2];
 Button startButton;
 
+TextField[] monteCarloSamplesField = new TextField[2];
+
 boolean testing = true;
   
 void setup()
@@ -32,6 +34,9 @@ void setup()
   
   selectAgentButtons[0] = new Button(75, 475, 100, 30, "Player");
   selectAgentButtons[1] = new Button(width-75, 475, 100, 30, "Player");
+  
+  monteCarloSamplesField[0] = new TextField(75, 425, 100, 30, "Samples");
+  monteCarloSamplesField[1] = new TextField(width-75, 425, 100, 30, "Samples");
   
   for(int i = 0; i < selectAgentButtons.length; ++i)
   {
@@ -49,7 +54,7 @@ void setup()
   
   if(testing)
   {
-    selectAgentButtons[0].SetSelected(3);
+    selectAgentButtons[0].SetSelected(5);
     selectAgentButtons[1].SetSelected(4);
     
     _agents[0] = GetAgent(selectAgentButtons[0].GetSelected(), _board, -1);
@@ -68,11 +73,11 @@ void resetBoard()
 
 void resetGame()
 {
+  _board.Reset();
   for(int i = 0; i < _agents.length; ++i)
   {
     _agents[i].Reset();
   }
-  _board.Reset();
   
   wins = new int[2];
   wins[0] = 0;
@@ -101,16 +106,35 @@ void handleUI()
     {
       _agents[i] = GetAgent(selectAgentButtons[i].GetSelected(), _board, i*2-1);
     }
+    if(selectAgentButtons[i].GetSelected() == AgentTypes.MONTECARLOVARIABLE)
+    {
+      monteCarloSamplesField[i].Update();
+      monteCarloSamplesField[i].Render();
+    }
   }
   if(state != GameState.GAME)
   {
     startButton.Render();
     if(startButton.Pressed())
     {
+      for(int i = 0; i < selectAgentButtons.length; ++i)
+      {
+        if(selectAgentButtons[i].GetSelected() == AgentTypes.MONTECARLOVARIABLE)
+        {
+          int samples = 25;
+          String in = monteCarloSamplesField[i].GetInput();
+          if(in != "")
+          {
+            samples = Integer.valueOf(in);
+          }
+          _agents[i] = new MonteCarloAgent(_board, (i*2)-1, samples);
+        }
+      }
       state = GameState.GAME;
       resetGame();
     }
   }
+  
   textSize(16);
   fill(0, 0, 0);
   textAlign(LEFT, TOP);
@@ -174,7 +198,7 @@ void makeMove()
   activePlayer = _board.GetActivePlayer();
   int player = (int)(_board.GetActivePlayer()/2.0f+1.5f); //converts player to 1/2
   PVector move = _agents[player-1].MakeMove();
-  if(move != null)
+  if(move != null && state == GameState.GAME)
   {
     _board.MakeMove(move);
     activePlayer = 0;
