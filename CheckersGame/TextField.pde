@@ -41,13 +41,12 @@ class TextField
         {
           if(key == _allowedKeys[i])
           {
-            if(!_pressedKeys[i])
+            if(!_pressedKeys[i])   
             {
               _input += "" + _allowedKeys[i];
               _pressedKeys[i] = true;
             }
           }
-          else _pressedKeys[i] = false;
         }
         if(key == BACKSPACE)
         {
