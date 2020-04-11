@@ -53,6 +53,7 @@ class Button
   public void Render()
   {
     stroke(0);
+    strokeWeight(1);
     rectMode(CENTER);
     textAlign(CENTER, CENTER);
     textSize(18);

@@ -1,6 +1,6 @@
 class TextField
 {
-  char[] _allowedKeys = {'0','1','2','3','4','5','6','7','8','9'};
+  char[] _allowedKeys = {'-','0','1','2','3','4','5','6','7','8','9'};
   boolean[] _pressedKeys;
   
   boolean _pressedBackSpace = false;
@@ -72,6 +72,7 @@ class TextField
   public void Render()
   {
     stroke(0);
+    strokeWeight(1);
     rectMode(CENTER);
     textAlign(LEFT, CENTER);
     textSize(18);

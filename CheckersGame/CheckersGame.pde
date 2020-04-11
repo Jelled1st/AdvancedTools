@@ -21,12 +21,13 @@ Button selectAgentButtons[] = new Button[2];
 Button startButton;
 
 TextField[] monteCarloSamplesField = new TextField[2];
+TextField[] monteCarloDepthField = new TextField[2];
 
 boolean testing = true;
   
 void setup()
 {
-  size(500,500);
+  size(500,580);
   
   _agents = new Agent[2];
   
@@ -35,8 +36,11 @@ void setup()
   selectAgentButtons[0] = new Button(75, 475, 100, 30, "Player");
   selectAgentButtons[1] = new Button(width-75, 475, 100, 30, "Player");
   
-  monteCarloSamplesField[0] = new TextField(75, 425, 100, 30, "Samples");
-  monteCarloSamplesField[1] = new TextField(width-75, 425, 100, 30, "Samples");
+  monteCarloSamplesField[0] = new TextField(75, 515, 100, 30, "Samples");
+  monteCarloSamplesField[1] = new TextField(width-75, 515, 100, 30, "Samples");
+  
+  monteCarloDepthField[0] = new TextField(75, 555, 100, 30, "Depth(-1)");
+  monteCarloDepthField[1] = new TextField(width-75, 555, 100, 30, "Depth(-1)");
   
   for(int i = 0; i < selectAgentButtons.length; ++i)
   {
@@ -54,7 +58,7 @@ void setup()
   
   if(testing)
   {
-    selectAgentButtons[0].SetSelected(6);
+    selectAgentButtons[0].SetSelected(4);
     selectAgentButtons[1].SetSelected(5);
     
     _agents[0] = GetAgent(selectAgentButtons[0].GetSelected(), _board, -1);
@@ -110,6 +114,9 @@ void handleUI()
     {
       monteCarloSamplesField[i].Update();
       monteCarloSamplesField[i].Render();
+      
+      monteCarloDepthField[i].Update();
+      monteCarloDepthField[i].Render();
     }
   }
   if(state != GameState.GAME)
@@ -127,7 +134,13 @@ void handleUI()
           {
             samples = Integer.valueOf(in);
           }
-          _agents[i] = new MonteCarloAgent(_board, (i*2)-1, samples);
+          int depth = -1;
+          in = monteCarloDepthField[i].GetInput();
+          if(in != "")
+          {
+            depth = Integer.valueOf(in);
+          }
+          _agents[i] = new MonteCarloAgent(_board, (i*2)-1, samples, depth);
         }
       }
       state = GameState.GAME;
@@ -156,12 +169,12 @@ void handleUI()
     textSize(24);
     fill(0, 0, 255);
     textAlign(CENTER);
-    text("Min Wins: " + wins[0], width / 2, height / 4);
-    text("Max wins: " + wins[1], width / 2, height / 4 + 30);
+    text("Min Wins: " + wins[0], width / 2, 200);
+    text("Max wins: " + wins[1], width / 2, 230);
     textSize(18);
-    text("Total games played: " + gamesPlayed, width / 2, height / 4 * 3);
+    text("Total games played: " + gamesPlayed, width / 2, 400);
     textSize(26);
-    text("Press space to continue!", width /2, height / 4 * 3 + 30 );
+    text("Press space to continue!", width /2, 430 );
     if(keyPressed && key == ' ')
     {
       state = GameState.MENU;

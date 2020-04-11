@@ -5,9 +5,8 @@ static class AgentTypes
   static final int GREEDY = 2;
   static final int MONTECARLO = 3;
   static final int MONTECARLOVARIABLE = 4;
-  static final int MONTECARLOTESTS = 5;
-  static final int MONTECARLO80 = 6;
-  static final int AMOUNT = 7;
+  static final int MONTECARLO80 = 5;
+  static final int AMOUNT = 6;
   
   static public String ToString(int type)
   {
@@ -23,8 +22,6 @@ static class AgentTypes
       return "MonteCarlo";
     case AgentTypes.MONTECARLOVARIABLE:
       return "MC-VAR";
-    case AgentTypes.MONTECARLOTESTS:
-      return "MC-T";
     case AgentTypes.MONTECARLO80:
       return "MC-80";
     default:
@@ -52,9 +49,6 @@ Agent GetAgent(int type, Board board, int player)
     break;
   case AgentTypes.MONTECARLOVARIABLE:
     agent = new MonteCarloAgent(board, player);
-    break;
-  case AgentTypes.MONTECARLOTESTS:
-    agent = new MonteCarloAgent(board, player, 3);     
     break;
   case AgentTypes.MONTECARLO80:
     agent = new MonteCarloAgent(board, player, 80);     
