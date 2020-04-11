@@ -1,10 +1,10 @@
-class RandomAgent extends Agent
+class GreedyAgent extends Agent
 {  
-  public RandomAgent(Board pBoard, int player)
+  public GreedyAgent(Board pBoard, int player)
   {
     _playBoard = pBoard;
     playerID = player;
-    _name = "Random";
+    _name = "Greedy";
   }
   
   public PVector MakeMove()
@@ -34,9 +34,19 @@ class RandomAgent extends Agent
       }
       else
       {
-        random = (int)random(moves.size());
-        move = moves.get(random);
-        break;
+        ArrayList<PVector> jumps = _playBoard.AvailableJumpsForStone(stone);
+        if(jumps.size() == 0)
+        {
+          random = (int)random(moves.size());
+          move = moves.get(random);
+          break;
+        }
+        else
+        {
+          random = (int)random(jumps.size());
+          move = jumps.get(random);
+          break;
+        }
       }
     }
     

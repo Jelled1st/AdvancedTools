@@ -2,11 +2,12 @@ static class AgentTypes
 {
   static final int PLAYER = 0;
   static final int RANDOM = 1;
-  static final int MONTECARLO = 2;
-  static final int MONTECARLOVARIABLE = 3;
-  static final int MONTECARLOTESTS = 4;
-  static final int MONTECARLO80 = 5;
-  static final int AMOUNT = 6;
+  static final int GREEDY = 2;
+  static final int MONTECARLO = 3;
+  static final int MONTECARLOVARIABLE = 4;
+  static final int MONTECARLOTESTS = 5;
+  static final int MONTECARLO80 = 6;
+  static final int AMOUNT = 7;
   
   static public String ToString(int type)
   {
@@ -16,6 +17,8 @@ static class AgentTypes
       return "Player";
     case AgentTypes.RANDOM:
       return "Random";
+    case AgentTypes.GREEDY:
+      return "Greedy";
     case AgentTypes.MONTECARLO:
       return "MonteCarlo";
     case AgentTypes.MONTECARLOVARIABLE:
@@ -40,6 +43,9 @@ Agent GetAgent(int type, Board board, int player)
     break;
   case AgentTypes.RANDOM:
     agent = new RandomAgent(board, player);
+    break;
+  case AgentTypes.GREEDY:
+    agent = new GreedyAgent(board, player);
     break;
   case AgentTypes.MONTECARLO:
     agent = new MonteCarloAgent(board, player);

@@ -54,8 +54,8 @@ void setup()
   
   if(testing)
   {
-    selectAgentButtons[0].SetSelected(5);
-    selectAgentButtons[1].SetSelected(4);
+    selectAgentButtons[0].SetSelected(6);
+    selectAgentButtons[1].SetSelected(5);
     
     _agents[0] = GetAgent(selectAgentButtons[0].GetSelected(), _board, -1);
     _agents[1] = GetAgent(selectAgentButtons[1].GetSelected(), _board, 1);
