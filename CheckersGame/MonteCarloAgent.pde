@@ -5,6 +5,9 @@ class MonteCarloAgent extends Agent
   int _samples;
   int _playDepth;
   
+  IntList playedDepths;
+  int playedGames = 0;
+  
   public MonteCarloAgent(Board pBoard, int player)
   {
     this(pBoard, player, 25, -1);
@@ -47,8 +50,11 @@ class MonteCarloAgent extends Agent
 
   public PVector MakeMove()
   {
+    playedDepths = new IntList();
+    playedGames = 0;
+    
     //int seed = (int)random(1000000);
-    float bestScore = -abs(playerID)*2; //lower than the lowest score possible
+    float bestScore = -200; //lower than the lowest score possible
     PVector bestMove = new PVector(-1, -1);
     Stone bestStone = null;
     
@@ -95,6 +101,14 @@ class MonteCarloAgent extends Agent
         } else if(debugInfo) println("lower score, score was: " + score);
       }
     }
+    float averageDepth = 0;
+    for(int i = 0; i < playedDepths.size(); ++i)
+    {
+      averageDepth += playedDepths.get(i);
+    }
+    averageDepth /= playedGames;
+    if(debugInfo) println("Played a total of " + playedGames + " games with avarage depth: " + averageDepth);
+    
     _playBoard.SelectStone(bestStone);
     return bestMove;
   }
@@ -207,6 +221,8 @@ class MonteCarloAgent extends Agent
       
     } //end of while loop // board.finished
     if(debugInfo) println("Exited with depth: " + depth);
+    playedDepths.append(depth);
+    ++playedGames;
     return pCopy.CheckWinner();
   }
 }
