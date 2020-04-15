@@ -1,19 +1,19 @@
-class MiniMaxAgent extends Agent
+class AlphaBetaPruningAgent extends Agent
 {
   final static boolean debugInfo = false;
   int _playDepth = -1;
   
-  public MiniMaxAgent(Board pBoard, int player)
+  public AlphaBetaPruningAgent(Board pBoard, int player)
   {
     this(pBoard, player, -1);
   }
   
-  public MiniMaxAgent(Board pBoard, int player, int pDepth)
+  public AlphaBetaPruningAgent(Board pBoard, int player, int pDepth)
   {
     _playBoard = pBoard;
     playerID = player;
-    if(pDepth >= 0) _name = "MiniMax" + "_D" + pDepth;
-    else _name = "MiniMax";
+    if(pDepth >= 0) _name = "AlphaBeta" + "_D" + pDepth;
+    else _name = "AlphaBeta";
     _playDepth = pDepth;
   }
 
@@ -42,7 +42,7 @@ class MiniMaxAgent extends Agent
       {
         Board clone = _playBoard.Copy();
         clone.MakeMove(moves.get(m));
-        float score = getScore(clone, 0);
+        int score = getScore(clone, 0, -200, 200);
         
         if(playerID == -1) //min player
         {
@@ -68,7 +68,7 @@ class MiniMaxAgent extends Agent
     return bestMove;
   }
   
-  private int getScore(Board pBoard, int depth)
+  private int getScore(Board pBoard, int depth, int alpha, int beta)
   {
     int winner = pBoard.CheckWinner();
     if(depth == _playDepth || winner != 0 || pBoard.Finished())
@@ -98,9 +98,7 @@ class MiniMaxAgent extends Agent
       {
         Board clone = pBoard.Copy();
         clone.MakeMove(moves.get(m));
-        int score = 0;
-        if(depth % 1000 == 0 && depth != 0) score = getScoreR1(clone, depth+1);
-        else score = getScore(clone, depth+1);
+        int score = getScoreR1(clone, depth+1, alpha, beta);
         
         if(playerID == -1) //min player
         {
@@ -121,7 +119,7 @@ class MiniMaxAgent extends Agent
     return bestScore;
   }
   
-  private int getScoreR1(Board pBoard, int depth)
+  private int getScoreR1(Board pBoard, int depth, int alpha, int beta)
   {
     int winner = pBoard.CheckWinner();
     if(depth == _playDepth || winner != 0 || pBoard.Finished())
@@ -151,7 +149,7 @@ class MiniMaxAgent extends Agent
       {
         Board clone = pBoard.Copy();
         clone.MakeMove(moves.get(m));
-        int score = getScore(clone, depth+1);
+        int score = getScore(clone, depth+1, alpha, beta);
         
         if(playerID == -1) //min player
         {

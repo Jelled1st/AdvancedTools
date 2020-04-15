@@ -270,6 +270,12 @@ class Board
     return (diff) == 0 ? 0 : diff > 0 ? 1 : -1;
   }
   
+  public int GetScore()
+  {
+    int diff = _blackStones.size() - _whiteStones.size();
+    return diff;
+  }
+  
   //return if there are still available moves
   public boolean Finished()
   {

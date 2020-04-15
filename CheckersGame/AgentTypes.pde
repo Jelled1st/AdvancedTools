@@ -7,7 +7,8 @@ static class AgentTypes
   static final int MONTECARLOVARIABLE = 4;
   static final int MONTECARLO80 = 5;
   static final int VERYSLOW = 6;
-  static final int AMOUNT = 7;
+  static final int NOTVERYBUTSTILLSLOW = 7;
+  static final int AMOUNT = 8;
   
   static public String ToString(int type)
   {
@@ -27,6 +28,8 @@ static class AgentTypes
       return "MC-80";
     case AgentTypes.VERYSLOW:
       return "VerySlow MiniMax";
+    case AgentTypes.NOTVERYBUTSTILLSLOW:
+      return "Slow AlphaBeta";
     default:
       return "Not found";
     }
@@ -57,7 +60,10 @@ Agent GetAgent(int type, Board board, int player)
     agent = new MonteCarloAgent(board, player, 80);     
     break;
   case AgentTypes.VERYSLOW:
-    agent = new MiniMaxAgent(board, player, 8);
+    agent = new MiniMaxAgent(board, player, 10);
+    break;
+  case AgentTypes.NOTVERYBUTSTILLSLOW:
+    agent = new AlphaBetaPruningAgent(board, player, -1);
     break;
   default:
     agent = new RandomAgent(board, player);
