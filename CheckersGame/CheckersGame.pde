@@ -94,11 +94,6 @@ void draw()
   background(255);
   if(state == GameState.GAME) updateGame();
   handleUI();
-  if(keyPressed && (key == 'R' || key == 'r'))
-  {
-    state = GameState.MENU;
-    resetGame();
-  }
 }
 
 void handleUI()
@@ -208,9 +203,25 @@ void handleWin(int winner)
 void makeMove()
 {
   if(_board.GetActivePlayer() == activePlayer) return;
+  Board activeBoard = _board;
   activePlayer = _board.GetActivePlayer();
   int player = (int)(_board.GetActivePlayer()/2.0f+1.5f); //converts player to 1/2
-  PVector move = _agents[player-1].MakeMove();
+  PVector move = null;
+  try
+  {
+    move = _agents[player-1].MakeMove();
+  }
+  catch (Exception e)
+  {
+    println("Exception");
+    return;
+  }
+  if(activeBoard != _board || activePlayer != _board.GetActivePlayer())
+  {
+    //something changed while getting a move
+    //abord
+    return;
+  }
   if(move != null && state == GameState.GAME)
   {
     _board.MakeMove(move);

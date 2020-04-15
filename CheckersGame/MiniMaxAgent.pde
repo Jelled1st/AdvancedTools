@@ -70,6 +70,7 @@ class MiniMaxAgent extends Agent
   
   private int getScore(Board pBoard, int depth)
   {
+    println("getScore recursive, depth: " + depth);
     int winner = pBoard.CheckWinner();
     if(depth == _playDepth || winner != 0 || pBoard.Finished())
     {
@@ -96,11 +97,10 @@ class MiniMaxAgent extends Agent
       //cycle through all the stones
       for (int m = 0; m < moves.size(); ++m)
       {
-        Board clone = pBoard.Copy();
-        clone.MakeMove(moves.get(m));
-        int score = 0;
-        if(depth % 1000 == 0 && depth != 0) score = getScoreR1(clone, depth+1);
-        else score = getScore(clone, depth+1);
+        //Board clone = pBoard.Copy();
+        //clone.MakeMove(moves.get(m));
+        pBoard.MakeMove(moves.get(m));
+        int score = getScoreR1(pBoard, depth+1);
         
         if(playerID == -1) //min player
         {
@@ -116,6 +116,7 @@ class MiniMaxAgent extends Agent
             bestScore = score;
           }
         }
+        pBoard.UndoLastMove();
       }
     }
     return bestScore;
@@ -123,6 +124,7 @@ class MiniMaxAgent extends Agent
   
   private int getScoreR1(Board pBoard, int depth)
   {
+    println("getScoreR1 recursive, depth: " + depth);
     int winner = pBoard.CheckWinner();
     if(depth == _playDepth || winner != 0 || pBoard.Finished())
     {
@@ -149,9 +151,8 @@ class MiniMaxAgent extends Agent
       //cycle through all the stones
       for (int m = 0; m < moves.size(); ++m)
       {
-        Board clone = pBoard.Copy();
-        clone.MakeMove(moves.get(m));
-        int score = getScore(clone, depth+1);
+        pBoard.MakeMove(moves.get(m));
+        int score = getScore(pBoard, depth+1);
         
         if(playerID == -1) //min player
         {
@@ -167,6 +168,7 @@ class MiniMaxAgent extends Agent
             bestScore = score;
           }
         }
+        pBoard.UndoLastMove();
       }
     }
     return bestScore;

@@ -7,6 +7,8 @@ class Board
   int _activePlayer = -1;
   Stone _selectedStone = null;
   
+  ArrayList<Move> moves = new ArrayList<Move>();
+  
   public boolean requiredJump = false;
   
   public Board()
@@ -59,6 +61,7 @@ class Board
   
   private Board(Board pCopy)
   {
+    float startTime = millis();
     whiteColor = pCopy.whiteColor;
     blackColor = pCopy.blackColor;
     _blackStones = new ArrayList<Stone>();
@@ -247,6 +250,9 @@ class Board
     
     if(validMove)
     {
+      Move currentMove = new Move(_selectedStone, move);
+      moves.add(currentMove);
+      
       _selectedStone.SetTile(move);
       //if there is another jump available for the stone that just moved
       //do not switch player, because that player gets to jump again
@@ -259,6 +265,17 @@ class Board
       }
     }
     return validMove;
+  }
+  
+  public void UndoLastMove()
+  {
+    if(moves.size() == 0) return;
+    Move move = moves.get(moves.size()-1);
+    moves.remove(moves.size()-1);
+    move.stone.SetTile(move.from);
+    _activePlayer = -_activePlayer;
+    if(_selectedStone != null) _selectedStone.Selected(false);
+    _selectedStone = null;
   }
   
   public int CheckWinner()
