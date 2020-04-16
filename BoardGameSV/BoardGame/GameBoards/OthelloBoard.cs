@@ -210,6 +210,11 @@ class OthelloBoard : SquareBoard {
 		return 0;
 	}
 
+	public override void UndoLastMove()
+	{
+		throw new NotImplementedException();
+	}
+
 	public int CountStones() {
 		int total=0;
 		for (int row = 0; row < _height; row++)

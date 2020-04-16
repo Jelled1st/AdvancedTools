@@ -189,6 +189,11 @@ class HexBoard : SquareBoard {
 		return 1;
 	}
 
+	public override void UndoLastMove()
+	{
+		throw new NotImplementedException();
+	}
+
 	public override bool isOpeningMove()
 	{
 		return movesmade == 0;

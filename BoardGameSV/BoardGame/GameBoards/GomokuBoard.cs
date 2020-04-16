@@ -120,6 +120,38 @@ class GomokuBoard : SquareBoard {
 			OnCellChange (row, col, activeplayer);
 		activeplayer = -activeplayer;
 		movesmade++;
+		moves.Add(move);
 		return 1;
+	}
+
+	public override void UndoLastMove()
+	{
+		if (moves.Count == 0) return;
+		int move = moves[moves.Count - 1];
+		moves.RemoveAt(moves.Count - 1);
+		int row = move / _width;
+		int col = move % _width;
+		board[row, col] = (sbyte)0;
+		activeplayer = -activeplayer;
+		movesmade--;
+	}
+
+	public override string ToString()
+	{
+		string output = "";
+		for (int i = 0; i < _height; i++)
+		{
+			for (int j = 0; j < _width; j++)
+			{
+				output += " " + Symbol(board[i, j]);
+			}
+			output += "\n";
+		}
+		for (int j = 0; j < _width; j++)
+		{
+			output += " " + j.ToString();
+		}
+		output += "\n";
+		return output;
 	}
 }

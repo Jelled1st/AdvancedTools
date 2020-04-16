@@ -243,6 +243,11 @@ class PentagoBoard : SquareBoard {
 		}
 	}
 
+	public override void UndoLastMove()
+	{
+		throw new NotImplementedException();
+	}
+
 	public bool GetTurn() {
 		return turn;
 	}

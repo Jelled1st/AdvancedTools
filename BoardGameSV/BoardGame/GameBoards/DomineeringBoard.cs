@@ -82,7 +82,31 @@ class DomineeringBoard : SquareBoard {
 		}
 		activeplayer = -activeplayer;
 		movesmade++;
+		moves.Add(move);
 		return 1;
+	}
+
+	public override void UndoLastMove()
+	{
+		if (moves.Count == 0) return;
+		int move = moves[moves.Count - 1];
+		moves.RemoveAt(moves.Count - 1);
+
+		int row = (Math.Abs(move) - 1) / _width;
+		int col = (Math.Abs(move) - 1) % _width;
+		int row2 = row;
+		int col2 = col + 1;
+		if (activeplayer == 1)
+		{
+			row2 = row + 1;
+			col2 = col;
+		}
+		if (board[row, col] != 0 || board[row2, col2] != 0)
+			return;
+		board[row, col] = (sbyte)0;
+		board[row2, col2] = (sbyte)0;
+
+		activeplayer = -activeplayer;
 	}
 
 	public override int MaxMovesLeft ()

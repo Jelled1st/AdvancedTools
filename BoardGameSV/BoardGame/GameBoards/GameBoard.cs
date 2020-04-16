@@ -7,6 +7,7 @@ using System;
 /// </summary>
 abstract class GameBoard {
 	protected int activeplayer=1;
+	protected List<int> moves = new List<int>();
 
 	public char Symbol(int playernum) {
 		switch (playernum) {
@@ -59,6 +60,8 @@ abstract class GameBoard {
 	/// <returns>-1 if the move was illegal. Otherwise 1, or a special value for specific games.</returns>
 	/// <param name="move">The move: should be one of the moves from the list returned by GetMoves.</param>
 	abstract public int MakeMove(int move);
+
+	abstract public void UndoLastMove();
 
 	/// <summary>
 	/// Returns the currently active player (1=Max or -1=Min).
