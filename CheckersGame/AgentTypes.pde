@@ -8,7 +8,7 @@ static class AgentTypes
   static final int MONTECARLO80 = 5;
   static final int VERYSLOW = 6;
   static final int NOTVERYBUTSTILLSLOW = 7;
-  static final int AMOUNT = 6;
+  static final int AMOUNT = 8;
   
   static public String ToString(int type)
   {

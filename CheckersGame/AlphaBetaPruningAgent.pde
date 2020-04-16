@@ -80,10 +80,11 @@ class AlphaBetaPruningAgent extends Agent
     boolean hasToJump = pBoard.AvailableJump() && pBoard.requiredJump;
 
     //holds all the stones
-    ArrayList<Stone> stones = pBoard.GetStones(pBoard.GetActivePlayer());
+    int activePlayer = pBoard.GetActivePlayer();
+    ArrayList<Stone> stones = pBoard.GetStones(activePlayer);
     if(debugInfo) println("amount of stones " + stones.size());
 
-    int bestScore = -(playerID)*200;
+    int bestScore = -(activePlayer)*200; //set score to lowest possible
 
     for (int s = 0; s < stones.size(); ++s)
     {
@@ -96,15 +97,22 @@ class AlphaBetaPruningAgent extends Agent
       //cycle through all the stones
       for (int m = 0; m < moves.size(); ++m)
       {
-        Board clone = pBoard.Copy();
-        clone.MakeMove(moves.get(m));
-        int score = getScoreR1(clone, depth+1, alpha, beta);
+        pBoard.MakeMove(moves.get(m));
+        int score = 0;
+        score = getScore(pBoard, depth+1, alpha, beta);
         
         if(playerID == -1) //min player
         {
           if(score < bestScore)
           {
             bestScore = score;
+          }
+          
+          beta = min(beta, score);
+          if(beta <= alpha)
+          {
+            pBoard.UndoLastMove();
+            break;
           }
         }
         else //max player
@@ -113,58 +121,14 @@ class AlphaBetaPruningAgent extends Agent
           {
             bestScore = score;
           }
-        }
-      }
-    }
-    return bestScore;
-  }
-  
-  private int getScoreR1(Board pBoard, int depth, int alpha, int beta)
-  {
-    int winner = pBoard.CheckWinner();
-    if(depth == _playDepth || winner != 0 || pBoard.Finished())
-    {
-      //if game is finished or depth is reached
-      return pBoard.GetScore();
-    }
-    
-    boolean hasToJump = pBoard.AvailableJump() && pBoard.requiredJump;
-
-    //holds all the stones
-    ArrayList<Stone> stones = pBoard.GetStones(pBoard.GetActivePlayer());
-    if(debugInfo) println("amount of stones " + stones.size());
-
-    int bestScore = -(playerID)*200;
-
-    for (int s = 0; s < stones.size(); ++s)
-    {
-      if(debugInfo) println("Evaluating stone " + s);
-      pBoard.SelectStone(stones.get(s));
-      int stoneIndex = pBoard.GetSelectedIndex();
-      ArrayList<PVector> moves;
-      if(hasToJump) moves = pBoard.AvailableJumpsForStone(stones.get(s));
-      else moves = pBoard.GetMovesFor(stones.get(s));
-      //cycle through all the stones
-      for (int m = 0; m < moves.size(); ++m)
-      {
-        Board clone = pBoard.Copy();
-        clone.MakeMove(moves.get(m));
-        int score = getScore(clone, depth+1, alpha, beta);
-        
-        if(playerID == -1) //min player
-        {
-          if(score < bestScore)
+          alpha = max(alpha, score);
+          if(beta <= alpha)
           {
-            bestScore = score;
+            pBoard.UndoLastMove();
+            break;
           }
         }
-        else //max player
-        {
-          if(score > bestScore)
-          {
-            bestScore = score;
-          }
-        }
+        pBoard.UndoLastMove();
       }
     }
     return bestScore;

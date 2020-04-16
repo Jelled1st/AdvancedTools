@@ -184,7 +184,7 @@ void updateGame()
   if(_board.Finished())
   {
     int winner = _board.CheckWinner();
-    println("\n----------------------\nWe have a result: " + winner + "\n----------------------\n");
+    //println("\n----------------------\nWe have a result: " + winner + "\n----------------------\n");
     handleWin(winner);
     return;
   }
@@ -207,15 +207,7 @@ void makeMove()
   activePlayer = _board.GetActivePlayer();
   int player = (int)(_board.GetActivePlayer()/2.0f+1.5f); //converts player to 1/2
   PVector move = null;
-  try
-  {
-    move = _agents[player-1].MakeMove();
-  }
-  catch (Exception e)
-  {
-    println("Exception");
-    return;
-  }
+  move = _agents[player-1].MakeMove();
   if(activeBoard != _board || activePlayer != _board.GetActivePlayer())
   {
     //something changed while getting a move
