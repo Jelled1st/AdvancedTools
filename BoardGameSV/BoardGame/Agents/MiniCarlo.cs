@@ -15,7 +15,7 @@ class MiniCarlo : Agent
 
 	private int _monteCarloSamples;
 
-	private bool _doMonteCarloDebug = false;
+	private bool _debugInfo = false;
 
 	public MiniCarlo(string name, int pSearchDepth, int pSamples = 25, bool pGreedyRandomPlay = true, bool pOnlyBetterScore = true) : base(name)
 	{
@@ -101,13 +101,13 @@ class MiniCarlo : Agent
 			float score = winner*2;
 			if (winner != 0)
 			{
-				Console.WriteLine("Score found by Minimax, {0}", score);
+				if (_debugInfo) Console.WriteLine("Score found by Minimax, {0}", score);
 			}
 			if (depth == _searchDepth && score == 0)
 			{
 				// search depth has been reached and no winner :(
 				// use monte carlo from here
-				Console.WriteLine("Reached search depth: switching to monte carlo...\nPlaying {0} games", _monteCarloSamples);
+				if (_debugInfo) Console.WriteLine("Reached search depth: switching to monte carlo...\nPlaying {0} games", _monteCarloSamples);
 				int wins = 0;
 				int losses = 0;
 				int player = board.GetActivePlayer();
@@ -126,9 +126,9 @@ class MiniCarlo : Agent
 				//else if (losses > wins) winner = -player;
 				//else winner = 0;
 				score = (wins - losses) / (float)_monteCarloSamples * player; // *player will either keep it the same (*1) or will make it negative (*-1)
-				Console.WriteLine("Games have been played, wins {0}, losses {1}, SCORE {2}", wins, losses, score);
+				if (_debugInfo) Console.WriteLine("Games have been played, wins {0}, losses {1}, SCORE {2}", wins, losses, score);
 			}
-			Console.WriteLine("Returning score {0}\n", score);
+			if (_debugInfo) Console.WriteLine("Returning score {0}\n", score);
 			return score;
 		}
 
@@ -202,7 +202,7 @@ class MiniCarlo : Agent
 			board.MakeMove(moves[random]);
 			++loops;
 		}
-		if (_doMonteCarloDebug) Console.WriteLine("========================> random game finished after {0} loops, winner {1}", loops, winner);
+		if (_debugInfo) Console.WriteLine("========================> random game finished after {0} loops, winner {1}", loops, winner);
 		return winner;
 	}
 
@@ -230,7 +230,7 @@ class MiniCarlo : Agent
 				if (tempWinner == activePlayer) //check if the winner is the one who just made the move
 				{
 					winner = tempWinner;
-					if (_doMonteCarloDebug) Console.WriteLine("Found a winning move for {0}", winner);
+					if (_debugInfo) Console.WriteLine("Found a winning move for {0}", winner);
 					break;
 				}
 			}
@@ -240,7 +240,7 @@ class MiniCarlo : Agent
 			board.MakeMove(moves[random]);
 			++loops;
 		}
-		if(_doMonteCarloDebug) Console.WriteLine("========================> random game finished after {0} loops, winner {1}", loops, winner);
+		if(_debugInfo) Console.WriteLine("========================> random game finished after {0} loops, winner {1}", loops, winner);
 		return winner;
 	}
 }

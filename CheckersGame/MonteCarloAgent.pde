@@ -128,7 +128,7 @@ class MonteCarloAgent extends Agent
               "\tDepth: " + pDepth + "\n" +
               "------------------------------\n");
     }
-    randomSeed(seed);
+    //randomSeed(seed);
     int depth = 0;
     //while the game is not finished and depth has not been reached 
     while(!(pCopy.Finished() || depth == pDepth))

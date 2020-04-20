@@ -53,7 +53,6 @@ class TextField
           if(!_pressedBackSpace)
           {
             if(_input.length() >= 1) _input = _input.substring(0, _input.length()-1);
-            println("'" + _input + "'");
             _pressedBackSpace = true;
           }
         }

@@ -23,7 +23,7 @@ static class AgentTypes
     case AgentTypes.ALPHABETA:
       return "AlphaBeta";
     case AgentTypes.ALPHA_AGENT:
-      return "Alpga";
+      return "Alpha";
     default:
       return "Not found";
     }
@@ -51,7 +51,7 @@ Agent GetAgent(int type, Board board, int player)
     agent = new AlphaBetaPruningAgent(board, player, -1);
     break;
   case AgentTypes.ALPHA_AGENT:
-    agent = new AlphaAgent(board, player, -1);
+    agent = new AlphaAgent(board, player, 2, 200);
     break;
   default:
     agent = new RandomAgent(board, player);

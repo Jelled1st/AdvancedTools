@@ -12,7 +12,7 @@ int activePlayer = 0;
 
 int[] wins;
 
-int gamesToPlay = 1;
+int gamesToPlay = 100;
 int gamesPlayed;
 
 boolean pressedButton = false;
@@ -105,7 +105,7 @@ void handleUI()
     {
       _agents[i] = GetAgent(selectAgentButtons[i].GetSelected(), _board, i*2-1);
     }
-    if(selectAgentButtons[i].GetSelected() == AgentTypes.MONTECARLO)
+    if(selectAgentButtons[i].GetSelected() == AgentTypes.MONTECARLO || selectAgentButtons[i].GetSelected() == AgentTypes.ALPHA_AGENT)
     {
       samplesField[i].Update();
       samplesField[i].Render();
@@ -113,7 +113,7 @@ void handleUI()
       depthField[i].Update();
       depthField[i].Render();
     }
-    if(selectAgentButtons[i].GetSelected() == AgentTypes.ALPHABETA)
+    else if(selectAgentButtons[i].GetSelected() == AgentTypes.ALPHABETA)
     {
       depthField[i].Update();
       depthField[i].Render();
@@ -142,7 +142,7 @@ void handleUI()
           }
           _agents[i] = new MonteCarloAgent(_board, (i*2)-1, samples, depth);
         }
-        if(selectAgentButtons[i].GetSelected() == AgentTypes.ALPHABETA)
+        else if(selectAgentButtons[i].GetSelected() == AgentTypes.ALPHABETA)
         {
           int depth = -1;
           String in = depthField[i].GetInput();
@@ -151,6 +151,22 @@ void handleUI()
             depth = Integer.valueOf(in);
           }
           _agents[i] = new AlphaBetaPruningAgent(_board, (i*2)-1, depth);
+        }
+        else if(selectAgentButtons[i].GetSelected() == AgentTypes.ALPHA_AGENT)
+        {
+          int samples = 25;
+          String in = samplesField[i].GetInput();
+          if(in != "")
+          {
+            samples = Integer.valueOf(in);
+          }
+          int depth = -1;
+          in = depthField[i].GetInput();
+          if(in != "")
+          {
+            depth = Integer.valueOf(in);
+          }
+          _agents[i] = new AlphaAgent(_board, (i*2)-1, depth, samples);
         }
       }
       state = GameState.GAME;

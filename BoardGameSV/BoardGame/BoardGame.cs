@@ -60,7 +60,7 @@ public class BoardGame : Game {
 		Player [5] = new MonteCarlo ("Carlo200", 200, true);	
 		Player [6] = new MiniMax ("MiMax3", 3, true);	
 		Player [7] = new MiniMax ("MiMaxFull", -1, true);
-		Player [8] = new MiniCarlo("MiniCarlo", 3);
+		Player [8] = new MiniCarlo("MiniCarlo", 2, 200);
 		Player [9] = new AgentMain.Alpha ("Alpha");
 
 		startingplayer = -1;
