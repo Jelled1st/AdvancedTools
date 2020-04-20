@@ -270,10 +270,6 @@ public class BoardGame : Game {
 			}
 			else
 			{
-				//next match will start
-				//gameLogger.SetBoard(mainboard);
-				//gameLogger.LogToConsole();
-				//gameLogger.LogToFile(loggedGamesPath + "MONTECARLO20_MINIMAX/game[" + gamesPlayed + "].txt");
 				startingplayer = -startingplayer;
 				StartGame();
 			}
@@ -322,7 +318,11 @@ public class BoardGame : Game {
 
 	// the main loop:
 	public void Update() {
-
+		if(Input.GetKeyDown(Key.U))
+		{
+			Console.WriteLine("pressed u");
+			mainboard.UndoLastMove();
+		}
 		switch (state) {
 		case GameState.Pause:
 			if (Input.GetMouseButtonDown (0) || autoPlay.GetSelection () == 1) {

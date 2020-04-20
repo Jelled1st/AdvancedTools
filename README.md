@@ -17,25 +17,25 @@ except by code) and will print this information into the console.
 
 Current implemented Agents
 =======================================
-Human         // The human player, not really an agent but can play quite well.
+Human         		// The human player, not really an agent but can play quite well.
 
-Random        // Gets all possible moves and picks randomly.
+Random        		// Gets all possible moves and picks randomly.
 
-Random+       // Gets all possible moves and picks randomly. However if there is a move which wins directly, it 
-              // will pick that move.
+Random+       		// Gets all possible moves and picks randomly. However if there is a move which wins directly, it 
+              		// will pick that move.
 
-MonteCarlo    // Plays an amount of games on every possible move on the current board. Then it will play the move
-              // with the highest score (determined on wins).
+MonteCarlo    		// Plays an amount of games on every possible move on the current board. Then it will play the move
+              		// with the highest score (determined on wins).
 
-MiniMax       // Recursively loops through all possible board states from the current state and will pick the move
-              // with the best future. This is a heavy AI on bigger games than Tic-Tac-Toe, that's why there is depth
-              // implemented which will keep the AI from searching deeper than said depth.
+MiniMax       		// Recursively loops through all possible board states from the current state and will pick the move
+              		// with the best future. This is a heavy AI on bigger games than Tic-Tac-Toe, that's why there is depth
+              		// implemented which will keep the AI from searching deeper than said depth.
 
-MiniCarlo     // Combination of MonteCarlo and Minimax (Custom name). Will use minimax until a certain depth is
-		 reached, than it will use MonteCarlo, this will save perfermonce on bigger games like connect 4.
+MiniCarlo     		// Combination of MonteCarlo and Minimax (Custom name). Will use minimax until a certain depth is
+		 	//reached, than it will use MonteCarlo, this will save perfermonce on bigger games like connect 4.
 
-Alpha	      // Alpha Beta pruning. gets the best move the same way as minimax. However, if a node is unnecessary to
-		 'calculate' it will skip that node, making it faster 
+Alpha	      		// Alpha Beta pruning. gets the best move the same way as minimax. However, if a node is unnecessary to
+		 	//'calculate' it will skip that node, making it faster 
 
 Processing Checkers
 =======================================
@@ -44,9 +44,18 @@ though the game does not recognize this yet. In the checkersGame various differe
 
 Current implemented Agents
 =======================================
-Human         // The human player, not really an agent but can play quite well.
+Human         		// The human player, not really an agent but can play quite well.
 
-Random        // Gets all possible moves and picks randomly.
+Random        		// Gets all possible moves and picks randomly.
 
-MonteCarlo    // Plays an amount of games on every possible move on the current board. Then it will play the move
-              // with the highest score (determined on wins).
+Greedy			// Picks a random move, but if there is a jump available, it will pick a random jump
+
+MonteCarlo    		// Plays an amount of games on every possible move on the current board. Then it will play the move
+              		// with the highest score (determined on wins).
+
+MiniMax       		// Recursively loops through all possible board states from the current state and will pick the move
+              		// with the best future. This is a heavy AI on bigger games than Tic-Tac-Toe, that's why there is depth
+              		// implemented which will keep the AI from searching deeper than said depth.
+
+AlphaBetaPruning  	// Alpha Beta pruning. gets the best move the same way as minimax. However, if a node is unnecessary to
+		 	'calculate' it will skip that node, making it faster 

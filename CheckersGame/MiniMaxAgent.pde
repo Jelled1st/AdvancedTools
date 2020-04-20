@@ -98,11 +98,12 @@ class MiniMaxAgent extends Agent
       if(hasToJump) moves = pBoard.AvailableJumpsForStone(stones.get(s));
       else moves = pBoard.GetMovesFor(stones.get(s));
       //cycle through all the stones
+      Board clone = pBoard.Copy();
       for (int m = 0; m < moves.size(); ++m)
       {
         //Board clone = pBoard.Copy();
         //clone.MakeMove(moves.get(m));
-        pBoard.MakeMove(moves.get(m));
+        clone.MakeMove(moves.get(m));
         int score = getScore(pBoard, depth+1);
         
         if(playerID == -1) //min player
@@ -119,7 +120,7 @@ class MiniMaxAgent extends Agent
             bestScore = score;
           }
         }
-        pBoard.UndoLastMove();
+        clone.UndoLastMove();
       }
     }
     return bestScore;

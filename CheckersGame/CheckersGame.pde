@@ -12,7 +12,7 @@ int activePlayer = 0;
 
 int[] wins;
 
-int gamesToPlay = 100;
+int gamesToPlay = 20;
 int gamesPlayed;
 
 boolean pressedButton = false;

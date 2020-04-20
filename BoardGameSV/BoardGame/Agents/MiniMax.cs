@@ -83,9 +83,12 @@ class MiniMax : Agent {
 
 	private int getMove(GameBoard board, int depth)
 	{
+		//Console.WriteLine("\n\nDepth: " + depth);
+		//Console.WriteLine("Called with board: \n" + board.ToString());
 		int winner = board.CheckWinner();
 		if (depth == _searchDepth || winner != 0 || board.MaxMovesLeft() == 0)
 		{
+			//Console.WriteLine("Returning winner: " + winner);
 			return winner;
 		}
 
@@ -97,9 +100,9 @@ class MiniMax : Agent {
 		if (board.GetActivePlayer() == -1)
 		{
 			bestValue = 200;
+			GameBoard clone = board.Clone();
 			for (int m = 0; m < moves.Count; ++m)
 			{
-				GameBoard clone = board.Clone();
 				clone.MakeMove(moves[m]);
 				//value is actually the winner of the game
 				int score = getMove(clone, depth + 1);
@@ -114,14 +117,15 @@ class MiniMax : Agent {
 					bestValue = score;
 					bestMove = m;
 				}
+				clone.UndoLastMove();
 			}
 		}
 		else
 		{
 			bestValue = -200;
+			GameBoard clone = board.Clone();
 			for (int m = 0; m < moves.Count; ++m)
 			{
-				GameBoard clone = board.Clone();
 				clone.MakeMove(moves[m]);
 				//value is actually the winner of the game
 				int score = getMove(clone, depth + 1);
@@ -136,6 +140,7 @@ class MiniMax : Agent {
 					bestValue = score;
 					bestMove = m;
 				}
+				clone.UndoLastMove();
 			}
 		}
 		return bestValue;

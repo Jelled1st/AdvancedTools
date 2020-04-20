@@ -131,7 +131,8 @@ class GomokuBoard : SquareBoard {
 		moves.RemoveAt(moves.Count - 1);
 		int row = move / _width;
 		int col = move % _width;
-		board[row, col] = (sbyte)0;
+		board[row, col] = 0;
+		if (OnCellChange != null) OnCellChange(row, col, 0);
 		activeplayer = -activeplayer;
 		movesmade--;
 	}

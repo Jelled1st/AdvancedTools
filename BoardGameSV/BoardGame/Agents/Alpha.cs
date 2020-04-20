@@ -93,14 +93,15 @@ namespace AgentMain {
 			{
 				tabs += "\t";
 			}
-			Console.WriteLine(tabs + "Called with alpha {0} and beta {1}", alpha, beta);
+			//Console.WriteLine(tabs + "Called with alpha {0} and beta {1}", alpha, beta);
 			int winner = board.CheckWinner();
 			if (depth == _searchDepth || winner != 0 || board.MaxMovesLeft() == 0)
 			{
 				return winner;
 			}
 
-			List<int> moves = board.GetMoves();
+			int[] moves = new int[board.GetMoves().Count];
+			board.GetMoves().CopyTo(moves);
 			int bestMove = 0;
 			int bestValue = 0;
 
@@ -108,13 +109,14 @@ namespace AgentMain {
 			if (board.GetActivePlayer() == -1)
 			{
 				bestValue = 200;
-				for (int m = 0; m < moves.Count; ++m)
+				GameBoard clone = board.Clone();
+				for (int m = 0; m < moves.Length; ++m)
 				{
-					GameBoard clone = board.Clone();
 					clone.MakeMove(moves[m]);
 					//value is actually the winner of the game
 					int score = getMove(clone, depth + 1, alpha, beta);
 					//beta = Math.Min(beta, score);
+					clone.UndoLastMove();
 
 					if (_onlyBetterScore && score < bestValue)
 					{
@@ -130,11 +132,11 @@ namespace AgentMain {
 					if (beta > bestValue)
 					{
 						beta = score;
-						Console.WriteLine(tabs + "set beta. a{0} vs b{1}", alpha, beta);
+						//Console.WriteLine(tabs + "set beta. a{0} vs b{1}", alpha, beta);
 					}
 					if (beta <= alpha)
 					{
-						Console.WriteLine(tabs + "beta was lower than alpha");
+						//Console.WriteLine(tabs + "beta was lower than alpha");
 						break;
 					}
 				}
@@ -142,14 +144,15 @@ namespace AgentMain {
 			else
 			{
 				bestValue = -200;
-				for (int m = 0; m < moves.Count; ++m)
+				GameBoard clone = board.Clone();
+				for (int m = 0; m < moves.Length; ++m)
 				{
-					GameBoard clone = board.Clone();
 					clone.MakeMove(moves[m]);
 					//value is actually the winner of the game
 					int score = getMove(clone, depth + 1, alpha, beta);
 					//alpha = Math.Max(alpha, score);
-					
+					clone.UndoLastMove();
+
 					if (_onlyBetterScore && score > bestValue)
 					{
 						bestValue = score;
@@ -164,80 +167,16 @@ namespace AgentMain {
 					if (alpha < bestValue)
 					{
 						alpha = score;
-						Console.WriteLine(tabs + "set alpha. a{0} vs b{1}", alpha, beta);
+						//Console.WriteLine(tabs + "set alpha. a{0} vs b{1}", alpha, beta);
 					}
 					if (beta <= alpha)
 					{
-						Console.WriteLine(tabs + "beta was lower than alpha");
+						//Console.WriteLine(tabs + "beta was lower than alpha");
 						break;
 					}
 				}
 			}
 			return bestValue;
-		}
-
-		private int getMoveOld(GameBoard board, int depth, out int requiredDepth)
-		{
-			string debugTabs = Helper.multiply("\t", depth);
-			List<int> moves = board.GetMoves();
-			Dictionary<int, int> moveValues = new Dictionary<int, int>();
-			Dictionary<int, int> moveDepths = new Dictionary<int, int>();
-
-			Console.WriteLine(debugTabs + "found {0} possible moves", moves.Count);
-
-			int bestMove = 0;
-			for (int i = 0; i < moves.Count; ++i)
-			{
-				Console.WriteLine(debugTabs + "applying move {0}", i);
-				GameBoard clone = board.Clone();
-				clone.MakeMove(moves[i]);
-				int winner = clone.CheckWinner();
-				if (winner != 0 || clone.MaxMovesLeft() == 0)
-				{
-					//reached end of try
-					//either there is a winner or there are no more moves left
-					Console.WriteLine(debugTabs + "found end of tree, winner: {0}", winner);
-					moveValues.Add(i, winner);
-				}
-				else
-				{
-					Console.WriteLine(debugTabs + "no winner found, going deeper V");
-					int moveDepth;
-					moveValues.Add(i, getMoveOld(clone, depth + 1, out moveDepth));
-				}
-
-				Console.WriteLine(debugTabs + "move value: {0}", moveValues[i]);
-
-				//min and max are switched here because once the board made it's move the active player switched
-				if (board.GetActivePlayer() == 1)
-				{
-					if (moveValues[i] > moveValues[bestMove])
-					{
-						Console.WriteLine(debugTabs + "this move was the best yet");
-						bestMove = i;
-					}
-				}
-				else if (board.GetActivePlayer() == -1)
-				{
-					if (moveValues[i] < moveValues[bestMove])
-					{
-						Console.WriteLine(debugTabs + "this move was the best yet");
-						bestMove = i;
-					}
-				}
-			}
-
-			if (true)
-			{
-				for (int i = 0; i < moves.Count; ++i)
-				{
-					Console.WriteLine(debugTabs + "Found move[{0}] with value {1}", i, moveValues[i]);
-				}
-				Console.WriteLine(debugTabs + "====================> using move[{0}]", bestMove);
-			}
-
-			requiredDepth = depth;
-			return moves[bestMove];
 		}
 	}
 
