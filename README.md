@@ -58,4 +58,6 @@ MiniMax       		// Recursively loops through all possible board states from the 
               		// implemented which will keep the AI from searching deeper than said depth.
 
 AlphaBetaPruning  	// Alpha Beta pruning. gets the best move the same way as minimax. However, if a node is unnecessary to
-		 	'calculate' it will skip that node, making it faster 
+		 	// 'calculate' it will skip that node, making it faster 
+
+Alpha			// Combination of Alpha Beta pruning and monte carlo for a relatively fast and good result
