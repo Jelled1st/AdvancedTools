@@ -74,9 +74,12 @@ class AlphaAgent extends Agent
     return bestMove;
   }
 
+  //depth is the current depth of the search/tree
+  //alpha is the highest found value yet
+  //beta is the lowest found value yet
   private float getScore(Board pBoard, int depth, float alpha, float beta)
   {
-    if (depth == _playDepth || pBoard.Finished())
+    if (depth >= _playDepth || pBoard.Finished())
     {
       //if game is finished or depth is reached
       if (pBoard.Finished()) 
@@ -84,6 +87,36 @@ class AlphaAgent extends Agent
         //if there is a winner return that winner
         return pBoard.CheckWinner() * 2; //this counts as a higher win, since it is sure
       }
+
+      int activePlayerBeforeJumps = pBoard.GetActivePlayer();
+
+      //if there is still a jump left to do, make the jump
+      //it can make up to 10 more jumps
+      int totalStones = pBoard.GetStones(-1).size() + pBoard.GetStones(1).size();
+      int whileLoops = 0;
+      while (whileLoops <= 10 && pBoard.AvailableJump())
+      {
+        if(debugInfo) println("A jump is available: " + whileLoops);
+        //compile another move
+        int activePlayer = pBoard.GetActivePlayer();
+        ArrayList<Stone> stones = pBoard.GetStones(activePlayer);
+        if (debugInfo) println("amount of stones " + stones.size());
+        for (int s = 0; s < stones.size(); ++s)
+        {
+          if(debugInfo) println("Evaluating stone " + s);
+          pBoard.SelectStone(stones.get(s));
+          int stoneIndex = pBoard.GetSelectedIndex();
+          ArrayList<PVector> moves;
+          moves = pBoard.AvailableJumpsForStone(stones.get(s));
+          if(moves == null || moves.size() == 0) continue;
+          int randomMove = (int)random(moves.size());
+          pBoard.MakeMove(moves.get(randomMove));
+          break;
+        }
+        ++whileLoops;
+      }
+      if(whileLoops > 0 && debugInfo) println("Exiting jumps!"); 
+
       //continue with Monte Carlo
       int wins = 0;
       int losses = 0;
@@ -91,10 +124,20 @@ class AlphaAgent extends Agent
       {
         Board copy = pBoard.Copy();
         int outcome = PlayRandomGame(copy);
-        if (outcome == pBoard.GetActivePlayer()) ++wins;
-        else if (outcome == -pBoard.GetActivePlayer()) ++losses;
+        if (outcome == activePlayerBeforeJumps) ++wins;
+        else if (outcome == -activePlayerBeforeJumps) ++losses;
       }
       float score = (wins - losses) / (float)_samples;
+      
+      
+      while (whileLoops > 0)
+      {
+        pBoard.UndoLastMove();
+        --whileLoops;
+      }
+      int stonesAfterUndos = pBoard.GetStones(-1).size() + pBoard.GetStones(1).size();
+      if(stonesAfterUndos != totalStones) println("Stones after undos is NOT correct: first(" + totalStones + "), after(" + stonesAfterUndos + ")");
+      
       return score;
     }
 
@@ -119,7 +162,7 @@ class AlphaAgent extends Agent
         if (hasToJump) moves = pBoard.AvailableJumpsForStone(stones.get(s));
         else moves = pBoard.GetMovesFor(stones.get(s));
         //cycle through all the stones
-        
+
         Board clone = pBoard.Copy();
         for (int m = 0; m < moves.size(); ++m)
         {
@@ -133,17 +176,16 @@ class AlphaAgent extends Agent
           }
 
           beta = min(beta, bestScore);
-          if(beta <= alpha)
+          if (beta <= alpha)
           {
             clone.UndoLastMove();
             break;
           }
-          
+
           clone.UndoLastMove();
         }
       }
-    }
-    else if (activePlayer == 1)
+    } else if (activePlayer == 1)
     {
       bestScore = -200;
       for (int s = 0; s < stones.size(); ++s)
@@ -155,7 +197,7 @@ class AlphaAgent extends Agent
         if (hasToJump) moves = pBoard.AvailableJumpsForStone(stones.get(s));
         else moves = pBoard.GetMovesFor(stones.get(s));
         //cycle through all the stones
-        
+
         Board clone = pBoard.Copy();
         for (int m = 0; m < moves.size(); ++m)
         {
@@ -169,7 +211,7 @@ class AlphaAgent extends Agent
           }
 
           alpha = max(beta, bestScore);
-          if(beta <= alpha)
+          if (beta <= alpha)
           {
             clone.UndoLastMove();
             break;

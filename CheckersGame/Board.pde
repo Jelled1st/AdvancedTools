@@ -202,6 +202,8 @@ class Board
     
     boolean jumpMove = false;
     
+    Stone claimedStone = null;
+    
     //make a hit, get other stone
     if((relativeMove.x == -2 || relativeMove.x == 2) && (relativeMove.y == -2 || relativeMove.y == 2))
     {
@@ -214,12 +216,14 @@ class Board
         if(_activePlayer == -1 && stone.GetColor() == blackColor)
         {
           validMove = true;
+          claimedStone = stone;
           _blackStones.remove(stone);
           jumpMove = true;
         }
         else if(_activePlayer == 1 && stone.GetColor() == whiteColor)
         {
           validMove = true;
+          claimedStone = stone;
           _whiteStones.remove(stone);
           jumpMove = true;
         }
@@ -250,7 +254,7 @@ class Board
     
     if(validMove)
     {
-      Move currentMove = new Move(_selectedStone, move);
+      Move currentMove = new Move(_selectedStone, move, claimedStone);
       moves.add(currentMove);
       
       _selectedStone.SetTile(move);
@@ -273,6 +277,15 @@ class Board
     Move move = moves.get(moves.size()-1);
     moves.remove(moves.size()-1);
     move.stone.SetTile(move.from);
+    if(move.claimedStone != null)
+    {
+      Stone claimed = move.claimedStone;
+      if(claimed.GetColor() == whiteColor)
+      {
+        _whiteStones.add(claimed);
+      }
+      else _blackStones.add(claimed);
+    }
     _activePlayer = -_activePlayer;
     if(_selectedStone != null) _selectedStone.Selected(false);
     _selectedStone = null;
