@@ -4,11 +4,9 @@ static class AgentTypes
   static final int RANDOM = 1;
   static final int GREEDY = 2;
   static final int MONTECARLO = 3;
-  static final int MONTECARLOVARIABLE = 4;
-  static final int MONTECARLO80 = 5;
-  static final int VERYSLOW = 6;
-  static final int NOTVERYBUTSTILLSLOW = 7;
-  static final int AMOUNT = 8;
+  static final int ALPHABETA = 4;
+  static final int ALPHA_AGENT = 5;
+  static final int AMOUNT = 6;
   
   static public String ToString(int type)
   {
@@ -21,15 +19,11 @@ static class AgentTypes
     case AgentTypes.GREEDY:
       return "Greedy";
     case AgentTypes.MONTECARLO:
-      return "MonteCarlo";
-    case AgentTypes.MONTECARLOVARIABLE:
       return "MC-VAR";
-    case AgentTypes.MONTECARLO80:
-      return "MC-80";
-    case AgentTypes.VERYSLOW:
-      return "VerySlow MiniMax";
-    case AgentTypes.NOTVERYBUTSTILLSLOW:
-      return "Slow AlphaBeta";
+    case AgentTypes.ALPHABETA:
+      return "AlphaBeta";
+    case AgentTypes.ALPHA_AGENT:
+      return "Alpga";
     default:
       return "Not found";
     }
@@ -53,17 +47,11 @@ Agent GetAgent(int type, Board board, int player)
   case AgentTypes.MONTECARLO:
     agent = new MonteCarloAgent(board, player);
     break;
-  case AgentTypes.MONTECARLOVARIABLE:
-    agent = new MonteCarloAgent(board, player);
-    break;
-  case AgentTypes.MONTECARLO80:
-    agent = new MonteCarloAgent(board, player, 80);     
-    break;
-  case AgentTypes.VERYSLOW:
-    agent = new MiniMaxAgent(board, player, -1);
-    break;
-  case AgentTypes.NOTVERYBUTSTILLSLOW:
+  case AgentTypes.ALPHABETA:
     agent = new AlphaBetaPruningAgent(board, player, -1);
+    break;
+  case AgentTypes.ALPHA_AGENT:
+    agent = new AlphaAgent(board, player, -1);
     break;
   default:
     agent = new RandomAgent(board, player);

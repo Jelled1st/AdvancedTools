@@ -1,14 +1,14 @@
-class AlphaBetaPruningAgent extends Agent
+class AlphaAgent extends Agent
 {
   final static boolean debugInfo = false;
   int _playDepth = -1;
   
-  public AlphaBetaPruningAgent(Board pBoard, int player)
+  public AlphaAgent(Board pBoard, int player)
   {
     this(pBoard, player, -1);
   }
   
-  public AlphaBetaPruningAgent(Board pBoard, int player, int pDepth)
+  public AlphaAgent(Board pBoard, int player, int pDepth)
   {
     _playBoard = pBoard;
     playerID = player;

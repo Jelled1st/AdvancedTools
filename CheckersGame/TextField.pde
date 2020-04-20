@@ -53,6 +53,7 @@ class TextField
           if(!_pressedBackSpace)
           {
             if(_input.length() >= 1) _input = _input.substring(0, _input.length()-1);
+            println("'" + _input + "'");
             _pressedBackSpace = true;
           }
         }
@@ -82,7 +83,7 @@ class TextField
     rect(position.x, position.y, size.x, size.y);
     fill(0);
     if(_input == "") text(_text, position.x - size.x/2+5, position.y);
-    else text(_input, position.x - size.x/2, position.y);
+    else text(_input, position.x - size.x/2+5, position.y);
   }
   
   public void SetInput(String input)
