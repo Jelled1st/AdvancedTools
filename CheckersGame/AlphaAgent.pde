@@ -46,11 +46,11 @@ class AlphaAgent extends Agent
       if (hasToJump) moves = _playBoard.AvailableJumpsForStone(stones.get(s));
       else moves = _playBoard.GetMovesFor(stones.get(s));
       //cycle through all the stones
+      Board clone = _playBoard.Copy();
       for (int m = 0; m < moves.size(); ++m)
       {
-        Board clone = _playBoard.Copy();
         clone.MakeMove(moves.get(m));
-        float score = getScore(clone, 0, -200, 200);
+        float score = getScore(clone, 0, -200, 200, false);
 
         if (playerID == -1) //min player
         {
@@ -70,6 +70,7 @@ class AlphaAgent extends Agent
             bestStone = stones.get(s);
           }
         }
+        clone.UndoLastMove();
       }
     }
     _playBoard.SelectStone(bestStone);
@@ -79,9 +80,14 @@ class AlphaAgent extends Agent
   //depth is the current depth of the search/tree
   //alpha is the highest found value yet
   //beta is the lowest found value yet
-  private float getScore(Board pBoard, int depth, float alpha, float beta)
+  private float getScore(Board pBoard, int depth, float alpha, float beta, boolean moveWasCapture)
   {
-    if (depth >= _playDepth || pBoard.Finished())
+    boolean doQuiescenceSearch = false;
+    if(_quiescenceSearch)
+    {
+      doQuiescenceSearch = moveWasCapture && pBoard.AvailableJump();
+    }
+    if ((depth >= _playDepth && !doQuiescenceSearch) || pBoard.Finished())
     {
       //if game is finished or depth is reached
       if (pBoard.Finished()) 
@@ -90,55 +96,18 @@ class AlphaAgent extends Agent
         return pBoard.CheckWinner() * 2; //this counts as a higher win, since it is sure
       }
 
-      int activePlayerBeforeJumps = pBoard.GetActivePlayer();
-  
-      //if there is still a jump left to do, make the jump
-      //it can make up to 10 more jumps
-      int totalStones = pBoard.GetStones(-1).size() + pBoard.GetStones(1).size();
-      int whileLoops = 0;
-      while (_quiescenceSearch && whileLoops <= 10 && pBoard.AvailableJump())
-      {
-        if(debugInfo) println("A jump is available: " + whileLoops);
-        //compile another move
-        int activePlayer = pBoard.GetActivePlayer();
-        ArrayList<Stone> stones = pBoard.GetStones(activePlayer);
-        if (debugInfo) println("amount of stones " + stones.size());
-        for (int s = 0; s < stones.size(); ++s)
-        {
-          if(debugInfo) println("Evaluating stone " + s);
-          pBoard.SelectStone(stones.get(s));
-          int stoneIndex = pBoard.GetSelectedIndex();
-          ArrayList<PVector> moves;
-          moves = pBoard.AvailableJumpsForStone(stones.get(s));
-          if(moves == null || moves.size() == 0) continue;
-          int randomMove = (int)random(moves.size());
-          pBoard.MakeMove(moves.get(randomMove));
-          break;
-        }
-        ++whileLoops;
-      }
-      if(whileLoops > 0 && debugInfo) println("Exiting jumps!"); 
-
       //continue with Monte Carlo
       int wins = 0;
       int losses = 0;
+      int activePlayer = pBoard.GetActivePlayer();
       for (int i = 0; i < _samples; ++i)
       {
         Board copy = pBoard.Copy();
         int outcome = PlayRandomGame(copy);
-        if (outcome == activePlayerBeforeJumps) ++wins;
-        else if (outcome == -activePlayerBeforeJumps) ++losses;
+        if (outcome == activePlayer) ++wins;
+        else if (outcome == -activePlayer) ++losses;
       }
       float score = (wins - losses) / (float)_samples;
-      
-      
-      while (whileLoops > 0)
-      {
-        pBoard.UndoLastMove();
-        --whileLoops;
-      }
-      int stonesAfterUndos = pBoard.GetStones(-1).size() + pBoard.GetStones(1).size();
-      if(stonesAfterUndos != totalStones) println("Stones after undos is NOT correct: first(" + totalStones + "), after(" + stonesAfterUndos + ")");
       
       return score;
     }
@@ -168,9 +137,10 @@ class AlphaAgent extends Agent
         Board board = pBoard.Copy();
         for (int m = 0; m < moves.size(); ++m)
         {
+          boolean moveIsCapture = board.moveIsJump(moves.get(m));
           board.MakeMove(moves.get(m));
           float score = 0;
-          score = getScore(board, depth+1, alpha, beta);
+          score = getScore(board, depth+1, alpha, beta, moveIsCapture);
 
           if (score < bestScore)
           {
@@ -203,9 +173,10 @@ class AlphaAgent extends Agent
         Board board = pBoard.Copy();
         for (int m = 0; m < moves.size(); ++m)
         {
+          boolean moveIsCapture = board.moveIsJump(moves.get(m));
           board.MakeMove(moves.get(m));
           float score = 0;
-          score = getScore(board, depth+1, alpha, beta);
+          score = getScore(board, depth+1, alpha, beta, moveIsCapture);
 
           if (score > bestScore)
           {

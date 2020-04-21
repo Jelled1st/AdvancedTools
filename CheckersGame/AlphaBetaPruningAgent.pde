@@ -2,6 +2,7 @@ class AlphaBetaPruningAgent extends Agent
 {
   final static boolean debugInfo = false;
   int _playDepth = -1;
+  boolean _quiescenceSearch = true;
 
   public AlphaBetaPruningAgent(Board pBoard, int player)
   {
@@ -76,7 +77,13 @@ class AlphaBetaPruningAgent extends Agent
       indent += '\t';
     }
     
-    if ((depth >= _playDepth && !moveWasCapture) || pBoard.Finished())
+    boolean doQuiescenceSearch = false;
+    if(_quiescenceSearch)
+    {
+      doQuiescenceSearch = moveWasCapture && pBoard.AvailableJump();
+    }
+    
+    if ((depth >= _playDepth && !doQuiescenceSearch) || pBoard.Finished())
     {
       //println("Depth: " + depth + ", was capture: " + moveWasCapture);
       //if there is a winner return that winner
