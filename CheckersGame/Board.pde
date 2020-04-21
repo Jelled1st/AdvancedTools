@@ -136,6 +136,15 @@ class Board
     return _activePlayer;
   }
   
+  public boolean moveIsJump(PVector move)
+  {
+    if(_selectedStone == null) return false;
+    PVector currentPos = _selectedStone.GetTile();
+    int diffX = (int)(move.x - currentPos.x);
+    if(diffX == 2 || diffX == -2) return true;
+    else return false;
+  }
+  
   public boolean IsValidMove(PVector move)
   {
     if(_selectedStone == null) return false;

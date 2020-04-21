@@ -3,6 +3,7 @@ class AlphaAgent extends Agent
   final static boolean debugInfo = false;
   int _playDepth = -1;
   int _samples;
+  boolean _quiescenceSearch = false; 
 
   public AlphaAgent(Board pBoard, int player)
   {
@@ -59,7 +60,8 @@ class AlphaAgent extends Agent
             bestMove = moves.get(m);
             bestStone = stones.get(s);
           }
-        } else //max player
+        } 
+        else //max player
         {
           if (score > bestScore)
           {
@@ -89,12 +91,12 @@ class AlphaAgent extends Agent
       }
 
       int activePlayerBeforeJumps = pBoard.GetActivePlayer();
-
+  
       //if there is still a jump left to do, make the jump
       //it can make up to 10 more jumps
       int totalStones = pBoard.GetStones(-1).size() + pBoard.GetStones(1).size();
       int whileLoops = 0;
-      while (whileLoops <= 10 && pBoard.AvailableJump())
+      while (_quiescenceSearch && whileLoops <= 10 && pBoard.AvailableJump())
       {
         if(debugInfo) println("A jump is available: " + whileLoops);
         //compile another move
@@ -162,13 +164,13 @@ class AlphaAgent extends Agent
         if (hasToJump) moves = pBoard.AvailableJumpsForStone(stones.get(s));
         else moves = pBoard.GetMovesFor(stones.get(s));
         //cycle through all the stones
-
-        Board clone = pBoard.Copy();
+        
+        Board board = pBoard.Copy();
         for (int m = 0; m < moves.size(); ++m)
         {
-          clone.MakeMove(moves.get(m));
+          board.MakeMove(moves.get(m));
           float score = 0;
-          score = getScore(clone, depth+1, alpha, beta);
+          score = getScore(board, depth+1, alpha, beta);
 
           if (score < bestScore)
           {
@@ -178,11 +180,11 @@ class AlphaAgent extends Agent
           beta = min(beta, bestScore);
           if (beta <= alpha)
           {
-            clone.UndoLastMove();
+            board.UndoLastMove();
             break;
           }
 
-          clone.UndoLastMove();
+          board.UndoLastMove();
         }
       }
     } else if (activePlayer == 1)
@@ -198,12 +200,12 @@ class AlphaAgent extends Agent
         else moves = pBoard.GetMovesFor(stones.get(s));
         //cycle through all the stones
 
-        Board clone = pBoard.Copy();
+        Board board = pBoard.Copy();
         for (int m = 0; m < moves.size(); ++m)
         {
-          clone.MakeMove(moves.get(m));
+          board.MakeMove(moves.get(m));
           float score = 0;
-          score = getScore(clone, depth+1, alpha, beta);
+          score = getScore(board, depth+1, alpha, beta);
 
           if (score > bestScore)
           {
@@ -213,10 +215,10 @@ class AlphaAgent extends Agent
           alpha = max(beta, bestScore);
           if (beta <= alpha)
           {
-            clone.UndoLastMove();
+            board.UndoLastMove();
             break;
           }
-          clone.UndoLastMove();
+          board.UndoLastMove();
         }
       }
     }

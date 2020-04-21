@@ -42,7 +42,8 @@ class AlphaBetaPruningAgent extends Agent
       {
         Board clone = _playBoard.Copy();
         clone.MakeMove(moves.get(m));
-        int score = getScore(clone, 0, -200, 200);
+        int score = getScore(clone, 0, -200, 200, false);
+        println("Final Score: " + score);
 
         if (playerID == -1) //min player
         {
@@ -67,12 +68,19 @@ class AlphaBetaPruningAgent extends Agent
     return bestMove;
   }
 
-  private int getScore(Board pBoard, int depth, int alpha, int beta)
+  private int getScore(Board pBoard, int depth, int alpha, int beta, boolean moveWasCapture)
   {
-    if (depth == _playDepth || pBoard.Finished())
+    String indent = "";
+    for(int i = 0; i < depth+1; ++i)
     {
-      //if game is finished or depth is reached
-      return pBoard.GetScore();
+      indent += '\t';
+    }
+    
+    if ((depth >= _playDepth && !moveWasCapture) || pBoard.Finished())
+    {
+      //println("Depth: " + depth + ", was capture: " + moveWasCapture);
+      //if there is a winner return that winner
+      return pBoard.GetScore(); //this counts as a higher win, since it is sure
     }
 
     boolean hasToJump = pBoard.AvailableJump() && pBoard.requiredJump;
@@ -96,28 +104,34 @@ class AlphaBetaPruningAgent extends Agent
         if (hasToJump) moves = pBoard.AvailableJumpsForStone(stones.get(s));
         else moves = pBoard.GetMovesFor(stones.get(s));
         //cycle through all the stones
-        Board clone = pBoard.Copy();
+        
+        Board board = pBoard.Copy();
         for (int m = 0; m < moves.size(); ++m)
         {
-          clone.MakeMove(moves.get(m));
+          boolean moveIsCapture = board.moveIsJump(moves.get(m));
+          board.MakeMove(moves.get(m));
           int score = 0;
-          score = getScore(clone, depth+1, alpha, beta);
+          score = getScore(board, depth+1, alpha, beta, moveIsCapture);
+          if(debugInfo) println(indent + activePlayer + ": Score: " + score + " current best: " + bestScore);
 
           if (score < bestScore)
           {
+            if(debugInfo) println(indent + activePlayer + ": Score was better");
             bestScore = score;
           }
 
           beta = min(beta, bestScore);
           if (beta <= alpha)
           {
+            board.UndoLastMove();
             break;
           }
-          clone.UndoLastMove();
+
+          board.UndoLastMove();
         }
       }
-    }
-    else if (activePlayer == 1)
+    } 
+    else
     {
       bestScore = -200;
       for (int s = 0; s < stones.size(); ++s)
@@ -129,27 +143,33 @@ class AlphaBetaPruningAgent extends Agent
         if (hasToJump) moves = pBoard.AvailableJumpsForStone(stones.get(s));
         else moves = pBoard.GetMovesFor(stones.get(s));
         //cycle through all the stones
-        Board clone = pBoard.Copy();
+
+        Board board = pBoard.Copy();
         for (int m = 0; m < moves.size(); ++m)
         {
-          clone.MakeMove(moves.get(m));
+          boolean moveIsCapture = board.moveIsJump(moves.get(m));
+          board.MakeMove(moves.get(m));
           int score = 0;
-          score = getScore(clone, depth+1, alpha, beta);
-
+          score = getScore(board, depth+1, alpha, beta, moveIsCapture);
+          if(debugInfo) println(indent + activePlayer + ": Score: " + score + " current best: " + bestScore);
+          
           if (score > bestScore)
           {
+            if(debugInfo) println(indent + activePlayer + ": Score was better");
             bestScore = score;
           }
 
-          alpha = max(alpha, bestScore);
+          alpha = max(beta, bestScore);
           if (beta <= alpha)
           {
+            board.UndoLastMove();
             break;
           }
-          clone.UndoLastMove();
+          board.UndoLastMove();
         }
       }
     }
+    if(debugInfo) println(indent + activePlayer + ": Returning: " +  bestScore);
     return bestScore;
   }
 }
